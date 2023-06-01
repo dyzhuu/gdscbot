@@ -18,11 +18,14 @@ const rest = new REST().setToken(config.TOKEN);
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
-		const data: any = await rest.put(
+		// rest.put(Routes.applicationGuildCommands(config.CLIENT_ID, config.GUILD_ID), { body: [] })
+		// .then(() => console.log('Successfully deleted all guild commands.'))
+		// .catch(console.error);
+
+		const data = <Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">[]> await rest.put(
 			Routes.applicationGuildCommands(config.CLIENT_ID, config.GUILD_ID),
 			{ body: commands },
 		);
-
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (e) {
 		console.error(e);
