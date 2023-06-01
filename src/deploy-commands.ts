@@ -3,7 +3,7 @@ import config from './config'
 import * as commandModules from "./commands"
 
 type Command = {
-    data: unknown
+    data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
 }
 
 const commands = [];
@@ -23,7 +23,7 @@ const rest = new REST().setToken(config.TOKEN);
 			{ body: commands },
 		);
 
-		console.log(`Successfully registered ${data.length} application (/) commands.`);
+		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (e) {
 		console.error(e);
 	}
