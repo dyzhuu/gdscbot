@@ -3,8 +3,7 @@ import http from 'http';
 import mongoose from 'mongoose';
 import config from './config';
 import Logging from './library/Logging';
-
-const app = express();
+import execRoutes from './routes/Exec'
 
 /** Connect to MongoDB */
 mongoose
@@ -20,6 +19,8 @@ mongoose
 
 /** Start server if Mongo connects */
 const StartServer = () => {
+    const app = express();
+
     app.use((req, res, next) => {
         /** Log the request */
         Logging.info(
@@ -58,6 +59,7 @@ const StartServer = () => {
         next();
     });
     /** Routes */
+    app.use('/execs/', execRoutes);
 
     /** Check */
     app.get('/ping', (req, res, next) =>
