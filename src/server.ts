@@ -1,24 +1,11 @@
 import express from 'express';
 import http from 'http';
-import mongoose from 'mongoose';
 import config from './config';
 import Logging from './library/Logging';
 import execRoutes from './routes/Exec'
 
-/** Connect to MongoDB */
-mongoose
-    .connect(config.MONGO_URI, { retryWrites: true, w: 'majority' })
-    .then(() => {
-        Logging.info('MongoDB is Connected.');
-        StartServer();
-    })
-    .catch((e) => {
-        Logging.error('Unable to connect: ');
-        Logging.error(e);
-    });
 
-/** Start server if Mongo connects */
-const StartServer = () => {
+export const StartServer = () => {
     const app = express();
 
     app.use((req, res, next) => {
@@ -51,7 +38,7 @@ const StartServer = () => {
         if (req.method == 'OPTIONS') {
             res.header(
                 'Access-Control-Allow-Methods',
-                'GET,PUT,POST,PATCH,DELETE'
+                'GET, PUT, POST, PATCH, DELETE'
             );
             return res.status(200).json({});
         }

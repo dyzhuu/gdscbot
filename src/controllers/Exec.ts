@@ -1,19 +1,39 @@
 import { NextFunction, Request, Response } from 'express';
-import mongoose, { mongo } from 'mongoose';
-import Exec from '../models/Exec';
+import Exec, { IExec } from '../models/Exec';
+import { google } from 'googleapis';
+import dotenv from 'dotenv'
+dotenv.config()
 
-const createExec = (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.body;
-
-    const exec = new Exec({
-        _id: new mongoose.Types.ObjectId(),
-        name
+const createExec = async (req: Request, res: Response, next: NextFunction) => {
+    const {name, role, email, phoneNumber, dietaryRequirements, shirtSize, yearGraduating, degree}: IExec = req.body
+    
+    const spreadsheetId = process.env.SPREADSHEET_ID;
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes: "https://www.googleapis.com/auth/spreadsheets",
     });
+    const service = google.sheets("v4");
 
-    return exec
-        .save()
-        .then((exec) => res.status(201).json({ exec }))
-        .catch((error) => res.status(500).json({ error }));
+    return service.spreadsheets.values.append({
+    spreadsheetId,
+    auth,
+    range: "Sheet1",
+    valueInputOption: "USER_ENTERED",
+    requestBody: {
+      values: [[name, role, email, phoneNumber, dietaryRequirements || "none", shirtSize, yearGraduating, degree]], 
+    },
+  })
+    .then(() => res.status(201).json({
+        name,
+        role,
+        email,
+        phoneNumber,
+        dietaryRequirements,
+        shirtSize,
+        yearGraduating,
+        degree
+    }))
+    .catch((error) => res.status(500).json({ error }));
 };
 
 const getExec = (req: Request, res: Response, next: NextFunction) => {
