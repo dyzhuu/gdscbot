@@ -15,7 +15,7 @@ export const client = new Client({
 });
 
 client.once(Events.ClientReady, (c) => {
-    console.log(`Ready! Logged in as ${c.user.tag}`);
+    Logging.info(`Ready! Logged in as ${c.user.tag}`);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -27,7 +27,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     try {
         await commands[commandName].execute(interaction, client);
     } catch (err) {
-        console.error(err);
+        Logging.error(err);
     }
 });
 

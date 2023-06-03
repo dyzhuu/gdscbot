@@ -2,8 +2,7 @@ import express from 'express';
 import http from 'http';
 import config from './config';
 import Logging from './library/Logging';
-import execRoutes from './routes/Exec'
-
+import execRoutes from './routes/Exec';
 
 export const StartServer = () => {
     const app = express();
@@ -45,6 +44,7 @@ export const StartServer = () => {
 
         next();
     });
+
     /** Routes */
     app.use('/execs/', execRoutes);
 

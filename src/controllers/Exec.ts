@@ -1,29 +1,20 @@
-import { NextFunction, Request, Response } from 'express';
-import Exec, { IExec } from '../models/Exec';
+import e, { NextFunction, Request, Response } from 'express';
+import Exec, { ExecModel } from '../models/Exec';
 import { google } from 'googleapis';
-import dotenv from 'dotenv'
-dotenv.config()
+import dotenv from 'dotenv';
+import Logging from '../library/Logging';
+dotenv.config();
 
+const spreadsheetId = process.env.SPREADSHEET_ID;
+const auth = new google.auth.GoogleAuth({
+    keyFile: 'credentials.json',
+    scopes: 'https://www.googleapis.com/auth/spreadsheets'
+});
+const service = google.sheets('v4');
+
+/** controller for creating new exec row */
 const createExec = async (req: Request, res: Response, next: NextFunction) => {
-    const {name, role, email, phoneNumber, dietaryRequirements, shirtSize, yearGraduating, degree}: IExec = req.body
-    
-    const spreadsheetId = process.env.SPREADSHEET_ID;
-    const auth = new google.auth.GoogleAuth({
-        keyFile: "credentials.json",
-        scopes: "https://www.googleapis.com/auth/spreadsheets",
-    });
-    const service = google.sheets("v4");
-
-    return service.spreadsheets.values.append({
-    spreadsheetId,
-    auth,
-    range: "Sheet1",
-    valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [[name, role, email, phoneNumber, dietaryRequirements || "none", shirtSize, yearGraduating, degree]], 
-    },
-  })
-    .then(() => res.status(201).json({
+    const {
         name,
         role,
         email,
@@ -32,26 +23,87 @@ const createExec = async (req: Request, res: Response, next: NextFunction) => {
         shirtSize,
         yearGraduating,
         degree
-    }))
-    .catch((error) => res.status(500).json({ error }));
+    }: ExecModel = req.body;
+
+    try {
+        await service.spreadsheets.values
+            .append({
+                spreadsheetId,
+                auth,
+                range: 'Sheet1',
+                valueInputOption: 'USER_ENTERED',
+                requestBody: {
+                    values: [
+                        [
+                            name,
+                            role,
+                            email,
+                            phoneNumber,
+                            dietaryRequirements,
+                            shirtSize,
+                            yearGraduating,
+                            degree
+                        ]
+                    ]
+                }
+            })
+        return res.status(201).json({
+                name,
+                role,
+                email,
+                phoneNumber,
+                dietaryRequirements,
+                shirtSize,
+                yearGraduating,
+                degree
+            })
+    } catch (error) {
+        res.status(500).json({ error })
+    }   
 };
 
-const getExec = (req: Request, res: Response, next: NextFunction) => {
-    const execId = req.params.execId;
+const getExec = async (req: Request, res: Response, next: NextFunction) => {
+    const {column, value} = req.body;
+    const range = 'Sheet1!A2:H30'
 
-    return Exec.findById(execId)
-        .then((exec) =>
-            exec
-                ? res.status(200).json({ exec })
-                : res.status(404).json({ message: 'not found' })
-        )
-        .catch((error) => res.status(500).json({ error }));
+    try{
+        const result = await service.spreadsheets.values
+            .get({
+                spreadsheetId,
+                range,
+                auth
+            })
+        
+        const sheetValues: string[][] = result.data.values!.filter(row => row[column - 1] === value);
+
+        const exec = sheetValues.map(details => new ExecModel(...details));
+        
+        Logging.info((exec))
+
+        return res.status(200).json(exec)
+    } catch (error) {
+        Logging.error(error)
+        return res.status(500).json({ error })
+    }
 };
 
-const getAllExec = (req: Request, res: Response, next: NextFunction) => {
-    return Exec.find()
-        .then((execs) => res.status(200).json({ execs }))
-        .catch((error) => res.status(500).json({ error }));
+const getAllExec = async (req: Request, res: Response, next: NextFunction) => {
+    const range = 'Sheet1!A2:H30'
+    try{
+        const result = await service.spreadsheets.values
+            .get({
+                spreadsheetId,
+                range,
+                auth
+            })
+                
+        const execs = result.data.values!.map(details => new ExecModel(...details)) 
+
+        return res.status(200).json(execs)
+    } catch (error) {
+        Logging.error(error)
+        return res.status(500).json({ error })
+    }
 };
 
 const updateExec = (req: Request, res: Response, next: NextFunction) => {

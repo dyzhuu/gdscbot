@@ -5,10 +5,23 @@ export interface IExec {
     role: string;
     email: string;
     phoneNumber: string;
-    dietaryRequirements?: string;
-    shirtSize: string;
-    yearGraduating: number;
-    degree: string;
+    dietaryRequirements: string;
+    shirtSize: string | null;
+    yearGraduating: number | null;
+    degree: string | null;
+}
+
+export class ExecModel {
+    constructor(
+        public name: string,
+        public role: string,
+        public email: string,
+        public phoneNumber: string,
+        public dietaryRequirements: string,
+        public shirtSize: string | null,
+        public yearGraduating: string | null,
+        public degree: string | null
+    ) {}
 }
 
 export interface IExecModel extends IExec, Document {}
@@ -22,7 +35,7 @@ const ExecSchema: Schema = new Schema(
         dietaryRequirements: { type: String, required: false },
         shirtSize: { type: String, required: true },
         yearGraduating: { type: String, required: true },
-        degree: { type: String, required: true },
+        degree: { type: String, required: true }
     },
     {
         versionKey: false
