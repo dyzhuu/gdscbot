@@ -2,7 +2,7 @@ import {
     ChatInputCommandInteraction,
     SlashCommandBuilder,
 } from 'discord.js';
-import { ExecModel } from '../../models/Exec';
+import sheets from '../../middleware/GoogleSheetsAPI'
 import Logging from '../../library/Logging';
 import dotenv from 'dotenv';
 dotenv.config()
@@ -69,22 +69,18 @@ export const data = new SlashCommandBuilder()
 export async function execute(
     interaction: ChatInputCommandInteraction) {
 
-    const values = interaction.options.data.map(x => x.value);
+    const values: string[] = interaction.options.data.map(x => x.value as string);
     values.splice(4)
 
-    let execProfile = new ExecModel(
-        ...values,
-        interaction.options.getString('dietary_requirements') ?? 'none',
-        interaction.options.getString('shirt_size'),
-        interaction.options.getString('year_graduating'),
-        interaction.options.getString('degree')
+    let execProfile = sheets.dboToObject(
+        [...values,
+        interaction.options.getString('dietary_requirements') ?? '/',
+        interaction.options.getString('shirt_size') ?? '/',
+        interaction.options.getString('year_graduating') ?? '/',
+        interaction.options.getString('degree') ?? '/']
     );
     
-    return await fetch(`${process.env.URL}:${process.env.PORT}/execs/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(execProfile)
-    })
+    return await sheets.createExec(execProfile)
         .then(() => {
             interaction.reply({
                 content: `Details added into google sheets database:\n\`\`\`${Object.entries(execProfile)

@@ -1,9 +1,7 @@
 import { Client, GatewayIntentBits, Events } from 'discord.js';
 import config from './config';
 import * as commandModules from './commands';
-import mongoose from 'mongoose';
 import Logging from './library/Logging';
-import { StartServer } from './server';
 
 const { Guilds, MessageContent, GuildMessages, GuildMembers } =
     GatewayIntentBits;
@@ -31,15 +29,4 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 
-/** Connect to MongoDB */
-mongoose
-    .connect(config.MONGO_URI, { retryWrites: true, w: 'majority' })
-    .then(() => {
-        Logging.info('MongoDB is Connected.');
-        StartServer();
-        client.login(config.TOKEN);
-    })
-    .catch((e) => {
-        Logging.error('Unable to connect: ');
-        Logging.error(e);
-    });
+client.login(config.TOKEN);

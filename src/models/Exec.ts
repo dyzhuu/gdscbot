@@ -5,9 +5,9 @@ export interface IExec {
     role: string;
     email: string;
     phoneNumber: string;
-    dietaryRequirements: string;
+    dietaryRequirements: string | null;
     shirtSize: string | null;
-    yearGraduating: number | null;
+    yearGraduating: string | null;
     degree: string | null;
 }
 
