@@ -1,4 +1,4 @@
-import { ChannelType, Client, CommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChannelType, ChatInputApplicationCommandData, ChatInputCommandInteraction, Client, CommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 
 export const data = new SlashCommandBuilder()
     .setName("help")
@@ -10,7 +10,7 @@ export const data = new SlashCommandBuilder()
             .setRequired(true)
         )
 
-export async function execute(interaction: CommandInteraction, client: Client) {
+export async function execute(interaction: ChatInputCommandInteraction, client: Client) {
     if (!interaction?.channelId){
         return
     }
@@ -25,7 +25,7 @@ export async function execute(interaction: CommandInteraction, client: Client) {
         reason: `Support ticket ${(Date.now())}`,
     })
 
-    const problemDescription = interaction.options.get("description")!.value;
+    const problemDescription = interaction.options.getString("description");
     const { user } = interaction;
     thread.send(`**User:** <${user}>
 **Problem:** ${problemDescription}`)
