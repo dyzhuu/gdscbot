@@ -5,3 +5,5 @@ build
 .env
 
 credentials.json
+
+names.txt

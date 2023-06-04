@@ -4,8 +4,6 @@ import {
 } from 'discord.js';
 import sheets from '../../middleware/GoogleSheetsAPI'
 import Logging from '../../library/Logging';
-import dotenv from 'dotenv';
-dotenv.config()
 
 const roleChoices = [
     { name: 'General Executive 💼', value: 'General Executive' },
@@ -74,10 +72,10 @@ export async function execute(
 
     let execProfile = sheets.dboToObject(
         [...values,
-        interaction.options.getString('dietary_requirements') ?? '/',
-        interaction.options.getString('shirt_size') ?? '/',
-        interaction.options.getString('year_graduating') ?? '/',
-        interaction.options.getString('degree') ?? '/']
+        interaction.options.getString('dietary_requirements') ?? '',
+        interaction.options.getString('shirt_size') ?? '',
+        interaction.options.getString('year_graduating') ?? '',
+        interaction.options.getString('degree') ?? '']
     );
     
     return await sheets.createExec(execProfile)

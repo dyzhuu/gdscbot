@@ -1,6 +1,7 @@
 import { google } from 'googleapis'
 import { ExecModel, IExec, IExecModel } from '../models/Exec';
 import Logging from '../library/Logging';
+import fs from 'fs';
 const spreadsheetId = process.env.SPREADSHEET_ID;
 const auth = new google.auth.GoogleAuth({
     keyFile: 'credentials.json',
@@ -32,6 +33,7 @@ const createExec = async (body: IExec) => {
                         ]
                     }
                 })
+            await writeName()
             return {
                  body
             }
@@ -58,6 +60,23 @@ const getExec = async (column: number, value: string) => {
         Logging.error(error)
     }
 };
+
+const writeName = async () => {
+    const range = 'Sheet1!A2:A30'
+    try{
+        const result = await service.spreadsheets.values
+            .get({
+                spreadsheetId,
+                range,
+                auth
+            })
+        const data = result.data.values!.flat(1)
+        fs.writeFileSync('names.txt', JSON.stringify(data))
+        return
+    } catch (error) {
+        Logging.error(error)
+    }
+}
 
 const getAllExec = async () => {
     const range = 'Sheet1!A2:H30'
@@ -90,4 +109,4 @@ function dboToObject(dbo: string[]): IExec {
     }
 };
 
-export default { createExec, dboToObject, getExec }
+export default { createExec, dboToObject, getExec, writeName }
