@@ -1,8 +1,10 @@
 import {
     ChatInputCommandInteraction,
     SlashCommandBuilder,
+    EmbedBuilder,
+    APIEmbedField
 } from 'discord.js';
-import sheets from '../../middleware/GoogleSheetsAPI'
+import sheets from '../../middleware/GoogleSheetsAPI';
 import Logging from '../../library/Logging';
 
 const roleChoices = [
@@ -48,8 +50,7 @@ export const data = new SlashCommandBuilder()
             )
     )
     .addStringOption((option) =>
-        option.setName('shirt_size')
-        .setDescription('Enter your shirt size')
+        option.setName('shirt_size').setDescription('Enter your shirt size')
     )
     .addStringOption((option) =>
         option
@@ -64,26 +65,48 @@ export const data = new SlashCommandBuilder()
             )
     );
 
-export async function execute(
-    interaction: ChatInputCommandInteraction) {
-
-    const values: string[] = interaction.options.data.map(x => x.value as string);
-    values.splice(4)
-
-    let execProfile = sheets.dboToObject(
-        [...values,
-        interaction.options.getString('dietary_requirements') ?? '',
-        interaction.options.getString('shirt_size') ?? '',
-        interaction.options.getString('year_graduating') ?? '',
-        interaction.options.getString('degree') ?? '']
+export async function execute(interaction: ChatInputCommandInteraction) {
+    const values: string[] = interaction.options.data.map(
+        (x) => x.value as string
     );
-    
-    return await sheets.createExec(execProfile)
+    values.splice(4);
+
+    let exec = sheets.dboToObject([
+        ...values,
+        interaction.options.getString('dietary_requirements') ?? 'N/A',
+        interaction.options.getString('shirt_size') ?? 'N/A',
+        interaction.options.getString('year_graduating') ?? 'N/A',
+        interaction.options.getString('degree') ?? 'N/A'
+    ]);
+
+    exec.name = exec.name
+        .toLowerCase()
+        .split(' ')
+        .map((x: string) => x.charAt(0).toUpperCase() + x.slice(1))
+        .join(' ');
+
+    const fields: APIEmbedField[] = [
+        { name: 'Role: ', value: exec.role },
+        { name: 'Email: ', value: exec.email },
+        { name: 'Phone Number: ', value: exec.phoneNumber },
+        { name: 'Dietary Requirements', value: exec.dietaryRequirements },
+        { name: 'Shirt Size', value: exec.shirtSize },
+        { name: 'Year Graduating', value: exec.yearGraduating },
+        { name: 'Degree', value: exec.degree }
+    ];
+
+    const embed = new EmbedBuilder()
+        .setColor('Blue')
+        .setFields(fields)
+        .setTitle(exec.name)
+        .setThumbnail(interaction.user.displayAvatarURL());
+
+    return await sheets
+        .createExec(exec)
         .then(() => {
             interaction.reply({
-                content: `Details added into google sheets database:\n\`\`\`${Object.entries(execProfile)
-                .map((x) => x.join(': '))
-                .join('\n')}\`\`\``,
+                content: 'Details added into google sheets database:',
+                embeds: [embed],
                 ephemeral: true
             });
         })

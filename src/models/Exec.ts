@@ -1,45 +1,10 @@
-import mongoose, { Document, Schema } from 'mongoose';
-
-export interface IExec {
+export default interface Exec {
     name: string;
     role: string;
     email: string;
     phoneNumber: string;
-    dietaryRequirements: string | null;
-    shirtSize: string | null;
-    yearGraduating: string | null;
-    degree: string | null;
+    dietaryRequirements: string;
+    shirtSize: string;
+    yearGraduating: string;
+    degree: string;
 }
-
-export class ExecModel {
-    constructor(
-        public name: string,
-        public role: string,
-        public email: string,
-        public phoneNumber: string,
-        public dietaryRequirements: string,
-        public shirtSize: string | null,
-        public yearGraduating: string | null,
-        public degree: string | null
-    ) {}
-}
-
-export interface IExecModel extends IExec, Document {}
-
-const ExecSchema: Schema = new Schema(
-    {
-        name: { type: String, required: true },
-        role: { type: String, required: true },
-        email: { type: String, required: true },
-        phoneNumber: { type: String, required: true },
-        dietaryRequirements: { type: String, required: false },
-        shirtSize: { type: String, required: true },
-        yearGraduating: { type: String, required: true },
-        degree: { type: String, required: true }
-    },
-    {
-        versionKey: false
-    }
-);
-
-export default mongoose.model<IExecModel>('Exec', ExecSchema);

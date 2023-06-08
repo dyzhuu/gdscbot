@@ -1,17 +1,16 @@
-import {
-    REST,
-    Routes,
-    SlashCommandAssertions,
-    SlashCommandBuilder
-} from 'discord.js';
+import { REST, Routes, SlashCommandBuilder } from 'discord.js';
 import config from './config';
 import * as commandModules from './commands';
+import Logging from './library/Logging';
 
 type Command = {
-    data: unknown;
+    data: Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
 };
 
-const commands = [];
+const commands: Omit<
+    SlashCommandBuilder,
+    'addSubcommand' | 'addSubcommandGroup'
+>[] = [];
 
 for (const module of Object.values<Command>(commandModules)) {
     commands.push(module.data);
@@ -21,7 +20,7 @@ const rest = new REST().setToken(config.TOKEN);
 
 (async () => {
     try {
-        console.log(
+        Logging.info(
             `Started refreshing ${commands.length} application (/) commands.`
         );
 
@@ -30,7 +29,7 @@ const rest = new REST().setToken(config.TOKEN);
             { body: commands }
         );
 
-        console.log(
+        Logging.info(
             `Successfully registered ${data.length} application (/) commands.`
         );
     } catch (e) {
