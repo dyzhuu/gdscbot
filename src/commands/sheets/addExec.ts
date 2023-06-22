@@ -4,7 +4,7 @@ import {
     EmbedBuilder,
     APIEmbedField
 } from 'discord.js';
-import sheets from '../../middleware/GoogleSheetsAPI';
+import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
 
 const roleChoices = [
@@ -99,11 +99,12 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         .setColor('Blue')
         .setFields(fields)
         .setTitle(exec.name)
-        .setThumbnail(interaction.user.displayAvatarURL());
+        // .setThumbnail(interaction.user.displayAvatarURL());
 
     return await sheets
         .createExec(exec)
         .then(() => {
+            Logging.info(exec);
             interaction.reply({
                 content: 'Details added into google sheets database:',
                 embeds: [embed],

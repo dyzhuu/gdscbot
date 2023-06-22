@@ -6,7 +6,7 @@ import {
     APIEmbedField
 } from 'discord.js';
 import fs from 'fs';
-import sheets from '../../middleware/GoogleSheetsAPI';
+import sheets from '../../services/googleSheetsAPI';
 
 // const filterChoices = JSON.parse(fs.readFileSync('names.txt').toString()).map((choice: string) => ({ name: choice, value: choice }));
 
@@ -58,7 +58,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         const embed = new EmbedBuilder()
             .setColor('Blue')
             .setFields(fields)
-            .setTitle(exec.name);
+            .setTitle(name);
 
         return interaction.reply({ embeds: [embed] });
     } catch (error) {

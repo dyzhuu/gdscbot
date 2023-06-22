@@ -3,12 +3,11 @@ import {
     GatewayIntentBits,
     Events,
     InteractionType,
-    Collection
 } from 'discord.js';
 import config from './config';
 import * as commandModules from './commands';
 import Logging from './library/Logging';
-import sheets from './middleware/GoogleSheetsAPI';
+import sheets from './services/googleSheetsAPI';
 
 const { Guilds, MessageContent, GuildMessages, GuildMembers } =
     GatewayIntentBits;
@@ -21,6 +20,7 @@ export const client = new Client({
 
 client.once(Events.ClientReady, (c) => {
     Logging.info(`Ready! Logged in as ${c.user.tag}`);
+    sheets.writeName()
     setInterval(() => sheets.writeName(), 3600000);
 });
 

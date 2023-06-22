@@ -4,7 +4,7 @@ import {
     SlashCommandBuilder,
     EmbedBuilder
 } from 'discord.js';
-import sheets from '../../middleware/GoogleSheetsAPI';
+import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
 
 export const data = new SlashCommandBuilder()

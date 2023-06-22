@@ -9,49 +9,36 @@ const auth = new google.auth.JWT({
 });
 const service = google.sheets('v4');
 
-const createExec = async (body: Exec) => {
-    const {
-        name,
-        role,
-        email,
-        phoneNumber,
-        dietaryRequirements,
-        shirtSize,
-        yearGraduating,
-        degree
-    } = body;
+async function createExec(exec: Exec) {
     try {
         await service.spreadsheets.values.append({
             spreadsheetId,
             auth,
-            range: 'Sheet1',
+            range: 'A2:H',
             valueInputOption: 'USER_ENTERED',
             requestBody: {
                 values: [
-                    [
-                        name,
-                        role,
-                        email,
-                        phoneNumber,
-                        dietaryRequirements,
-                        shirtSize,
-                        yearGraduating,
-                        degree
-                    ]
+                    Object.values(exec)
                 ]
             }
         });
         await writeName();
         return {
-            body
+            exec
         };
     } catch (error) {
         Logging.error(error);
     }
 };
 
-const getExec = async (column: number, value: string) => {
-    const range = 'Sheet1!A2:I30';
+/**
+ * 
+ * @param column the category to filter results by
+ * @param value the value to search for
+ * @returns array of array of exec details.
+ */
+async function getExec(column: number, value: string): Promise<Exec[] | void> {
+    const range = 'A2:H';
     try {
         const result = await service.spreadsheets.values.get({
             spreadsheetId,
@@ -64,29 +51,13 @@ const getExec = async (column: number, value: string) => {
         );
         const exec = sheetValues.map((details) => dboToObject(details));
 
-        return exec;
+        return exec
     } catch (error) {
         Logging.error(error);
     }
 };
 
-const writeName = async () => {
-    const range = 'Sheet1!A2:A30';
-    try {
-        const result = await service.spreadsheets.values.get({
-            spreadsheetId,
-            range,
-            auth
-        });
-        const data = result.data.values!.flat(1);
-        fs.writeFileSync('names.txt', JSON.stringify(data));
-        return;
-    } catch (error) {
-        Logging.error(error);
-    }
-};
-
-const getAllExec = async () => {
+async function getAllExec() {
     const range = 'Sheet1!A2:H30';
     try {
         const result = await service.spreadsheets.values.get({
@@ -99,6 +70,50 @@ const getAllExec = async () => {
             dboToObject(details)
         );
 
+        return;
+    } catch (error) {
+        Logging.error(error);
+    }
+};
+
+async function updateExec(exec: Exec) {
+    const range = 'A2:H';
+    try {
+        const nameResults = await service.spreadsheets.values.get({
+            spreadsheetId,
+            range: 'A2:A',
+            majorDimension: 'Columns',
+            auth
+        })
+        const row = nameResults.data.values![0].indexOf(exec.name) + 2
+
+        const result = await service.spreadsheets.values.update({
+            spreadsheetId,
+            range: `A${row}:H${row}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+                values: [
+                    Object.values(exec)
+                ]
+            },
+            auth
+        })
+
+    } catch(error) {
+        Logging.error(error)
+    }
+};
+
+async function writeName() {
+    const range = 'A2:A';
+    try {
+        const result = await service.spreadsheets.values.get({
+            spreadsheetId,
+            range,
+            auth
+        });
+        const data = result.data.values!.flat(1).sort();
+        fs.writeFileSync('names.txt', JSON.stringify(data));
         return;
     } catch (error) {
         Logging.error(error);
@@ -118,4 +133,4 @@ function dboToObject(dbo: string[]): Exec {
     };
 }
 
-export default { createExec, dboToObject, getExec, writeName };
+export default { writeName, dboToObject, createExec, getExec, updateExec };
