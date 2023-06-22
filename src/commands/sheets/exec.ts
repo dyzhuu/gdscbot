@@ -22,15 +22,15 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
     try {
         const username = interaction.options.getUser('username')!.username;
-    
+
         const exec = (await sheets.getExec(9, username))![0];
-    
+
         const fields: APIEmbedField[] = [
             { name: 'Role: ', value: exec.role },
             { name: 'Email: ', value: exec.email },
             { name: 'Phone Number: ', value: exec.phoneNumber }
         ];
-    
+
         const embed = new EmbedBuilder()
             .setColor('Blue')
             .setFields(fields)
@@ -40,6 +40,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             );
         interaction.reply({ embeds: [embed] });
     } catch (error) {
-        Logging.error(error)
+        Logging.error(error);
     }
 }

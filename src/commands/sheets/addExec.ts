@@ -98,8 +98,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     const embed = new EmbedBuilder()
         .setColor('Blue')
         .setFields(fields)
-        .setTitle(exec.name)
-        // .setThumbnail(interaction.user.displayAvatarURL());
+        .setTitle(exec.name);
+    // .setThumbnail(interaction.user.displayAvatarURL());
 
     return await sheets
         .createExec(exec)

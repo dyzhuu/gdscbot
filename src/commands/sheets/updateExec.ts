@@ -20,15 +20,14 @@ const roleChoices = [
 export const data = new SlashCommandBuilder()
     .setName('updateexec')
     .setDescription('Upates executive details from the google sheet')
-    .addStringOption(
-        (option) =>
-            option
-                .setName('name')
-                .setDescription(
-                    'Enter the name of the exec whose details to update'
-                )
-                .setRequired(true)
-                .setAutocomplete(true)
+    .addStringOption((option) =>
+        option
+            .setName('name')
+            .setDescription(
+                'Enter the name of the exec whose details to update'
+            )
+            .setRequired(true)
+            .setAutocomplete(true)
     )
     .addStringOption((option) =>
         option
@@ -42,9 +41,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('Enter your preferred email address')
     )
     .addStringOption((option) =>
-        option
-            .setName('phone_number')
-            .setDescription('Enter your phone number')
+        option.setName('phone_number').setDescription('Enter your phone number')
     )
     .addStringOption((option) =>
         option
@@ -84,25 +81,29 @@ export async function autocomplete(interaction: AutocompleteInteraction) {
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     try {
-        const name = interaction.options
-            .getString('name')!
+        const name = interaction.options.getString('name')!;
         const exec: Exec = (await sheets.getExec(1, name))![0];
         const updatedExec: Exec = sheets.dboToObject([
             name,
             interaction.options.getString('role') ?? exec.role,
             interaction.options.getString('email') ?? exec.email,
             interaction.options.getString('phone_number') ?? exec.phoneNumber,
-            interaction.options.getString('dietary_requirements') ?? exec.dietaryRequirements,
+            interaction.options.getString('dietary_requirements') ??
+                exec.dietaryRequirements,
             interaction.options.getString('shirt_size') ?? exec.shirtSize,
-            interaction.options.getString('year_graduating') ?? exec.yearGraduating,
+            interaction.options.getString('year_graduating') ??
+                exec.yearGraduating,
             interaction.options.getString('degree') ?? exec.degree
-        ])
-        
-        await sheets.updateExec(updatedExec)
+        ]);
+
+        await sheets.updateExec(updatedExec);
 
         const fields: APIEmbedField[] = Object.entries(updatedExec)
-            .filter( x => x[1] !== exec[x[0] as keyof typeof exec])
-            .map( x => ({ name: `${x[0].charAt(0).toUpperCase() + x[0].slice(1)}: `, value: `${exec[x[0] as keyof typeof exec]} → ${x[1]}` }))
+            .filter((x) => x[1] !== exec[x[0] as keyof typeof exec])
+            .map((x) => ({
+                name: `${x[0].charAt(0).toUpperCase() + x[0].slice(1)}: `,
+                value: `${exec[x[0] as keyof typeof exec]} → ${x[1]}`
+            }));
 
         const embed = new EmbedBuilder()
             .setColor('Blue')

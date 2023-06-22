@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
-const { CLIENT_ID, GUILD_ID, TOKEN, SPREADSHEET_ID} = process.env;
+const { CLIENT_ID, GUILD_ID, TOKEN, SPREADSHEET_ID } = process.env;
 if (!CLIENT_ID || !GUILD_ID || !TOKEN || !SPREADSHEET_ID) {
     throw new Error('Missing environment variables');
 }
@@ -9,7 +9,7 @@ const config: Record<string, string> = {
     CLIENT_ID,
     GUILD_ID,
     TOKEN,
-    SPREADSHEET_ID,
+    SPREADSHEET_ID
 };
 
 export default config;
