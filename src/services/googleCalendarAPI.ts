@@ -2,7 +2,7 @@ import { calendar_v3, google } from 'googleapis';
 import Logging from '../library/Logging';
 import fs from 'fs';
 import config from '../config';
-import announceEvent from '../announcements/announceEvent';
+import announceEvent from '../scheduledMessages/announceEvent';
 
 const calendarId: string = config.CALENDAR_ID;
 const auth = new google.auth.JWT({

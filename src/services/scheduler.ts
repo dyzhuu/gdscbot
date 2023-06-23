@@ -1,15 +1,15 @@
 import { CronJob } from 'cron';
-import calendar from '../services/googleCalendarAPI';
-import sheets from '../services/googleSheetsAPI';
+import calendar from './googleCalendarAPI';
+import sheets from './googleSheetsAPI';
 import { calendar_v3 } from 'googleapis';
-import weeklySync from './weeklySync';
-import announceEvent from './announceEvent';
+import weeklySync from '../scheduledMessages/weeklySync';
+import announceEvent from '../scheduledMessages/announceEvent';
 
 export default function runScheduler() {
-    //write to google sheets
+    //write to google sheets every hour
     new CronJob('0 0 * * * *', () => sheets.writeName, null, true);
 
-    // weeklySync
+    // weeklySync notif 6:30pm thurs
     new CronJob('0 30 18 * * 4', () => weeklySync(), null, true);
 
     // daily refresh for events

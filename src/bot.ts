@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits, Events, InteractionType } from 'discord.js';
 import config from './config';
 import * as commandModules from './commands';
 import Logging from './library/Logging';
+import runScheduler from './services/scheduler';
 
 const { Guilds, MessageContent, GuildMessages, GuildMembers } =
     GatewayIntentBits;
@@ -14,6 +15,7 @@ export const client = new Client({
 
 client.once(Events.ClientReady, (c) => {
     Logging.info(`🤖 Ready! Logged in as ${c.user.tag}`);
+    runScheduler()
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {

@@ -6,15 +6,14 @@ import {
 } from 'discord.js';
 
 import Logging from '../library/Logging';
-import { calendar_v3 } from 'googleapis';
 import config from '../config';
 
-export default async function announceEvent(event: calendar_v3.Schema$Event) {
+export default async function weeklySync() {
     const channelId = '1113381023296790571';
     const rolesIds = ['1121715988006711337', '1121716021372395522'];
+    const meetingTime = new Date().setHours(19, 30, 0, 0).valueOf() / 1000
 
     const client = new Client({ intents: GatewayIntentBits.Guilds });
-
     client
         .login(config.TOKEN)
         .then(async () => {
@@ -25,17 +24,15 @@ export default async function announceEvent(event: calendar_v3.Schema$Event) {
                 Logging.error(`Channel ${channelId} does not exist`);
             }
 
-            //TODO: better embed text
-            const embed = new EmbedBuilder()
-                .setColor('Blue')
-                .setTitle(event.summary! + event.start!.dateTime);
+                // const embed = new EmbedBuilder()
+                // .setColor('Blue')
+                // .setTitle(``);
 
             channel
                 .send({
                     content: `${rolesIds
                         .map((roleId) => `<@&${roleId}>`)
-                        .join(' ')}`,
-                    embeds: [embed]
+                        .join(' ')} Weekly sync <t:${meetingTime}:R>!`,
                 })
                 .then(() => client.destroy());
         })
