@@ -14,7 +14,7 @@ export const client = new Client({
 });
 
 client.once(Events.ClientReady, (c) => {
-    Logging.info(`Ready! Logged in as ${c.user.tag}`);
+    Logging.info(`🤖 Ready! Logged in as ${c.user.tag}`);
     sheets.writeName();
     setInterval(() => sheets.writeName(), 3600000);
 });
