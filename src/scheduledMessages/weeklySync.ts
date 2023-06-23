@@ -24,10 +24,6 @@ export default async function weeklySync() {
                 Logging.error(`Channel ${channelId} does not exist`);
             }
 
-                // const embed = new EmbedBuilder()
-                // .setColor('Blue')
-                // .setTitle(``);
-
             channel
                 .send({
                     content: `${rolesIds

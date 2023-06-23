@@ -9,6 +9,10 @@ const auth = new google.auth.JWT({
 });
 const service = google.sheets('v4');
 
+/**
+ * 
+ * @param exec exec object to insert into google sheets
+ */
 async function createExec(exec: Exec) {
     try {
         await service.spreadsheets.values.append({
@@ -21,9 +25,7 @@ async function createExec(exec: Exec) {
             }
         });
         await writeName();
-        return {
-            exec
-        };
+        return;
     } catch (error) {
         Logging.error(error);
     }
@@ -55,25 +57,29 @@ async function getExec(column: number, value: string): Promise<Exec[] | void> {
     }
 }
 
-async function getAllExec() {
-    const range = 'Sheet1!A2:H30';
-    try {
-        const result = await service.spreadsheets.values.get({
-            spreadsheetId,
-            range,
-            auth
-        });
+// async function getAllExec() {
+//     const range = 'Sheet1!A2:H30';
+//     try {
+//         const result = await service.spreadsheets.values.get({
+//             spreadsheetId,
+//             range,
+//             auth
+//         });
 
-        const execs = result.data.values!.map((details) =>
-            dboToObject(details)
-        );
+//         const execs = result.data.values!.map((details) =>
+//             dboToObject(details)
+//         );
 
-        return;
-    } catch (error) {
-        Logging.error(error);
-    }
-}
+//         return;
+//     } catch (error) {
+//         Logging.error(error);
+//     }
+// }
 
+/**
+ * 
+ * @param exec new exec details to update with
+ */
 async function updateExec(exec: Exec) {
     const range = 'A2:H';
     try {
@@ -85,7 +91,7 @@ async function updateExec(exec: Exec) {
         });
         const row = nameResults.data.values![0].indexOf(exec.name) + 2;
 
-        const result = await service.spreadsheets.values.update({
+        await service.spreadsheets.values.update({
             spreadsheetId,
             range: `A${row}:H${row}`,
             valueInputOption: 'USER_ENTERED',
@@ -99,6 +105,7 @@ async function updateExec(exec: Exec) {
     }
 }
 
+// writes names in local storage
 async function writeName() {
     const range = 'A2:A';
     try {
@@ -115,6 +122,7 @@ async function writeName() {
     }
 }
 
+// array to Exec object
 function dboToObject(dbo: string[]): Exec {
     return {
         name: dbo[0],

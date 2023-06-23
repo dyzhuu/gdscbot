@@ -14,10 +14,12 @@ app.use(
 );
 app.use(express.json());
 
+// endpoint for webhook access
 app.post('/hook', (req, res) => {
     calendar.processEventUpdates();
 });
 
+// for stopping notification channel
 app.post('/stop', (req, res) => {
     const { id, resourceId } = req.body;
     calendar.stopChannel(id, resourceId)

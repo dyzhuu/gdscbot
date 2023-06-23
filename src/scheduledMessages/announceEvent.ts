@@ -10,6 +10,7 @@ import Logging from '../library/Logging';
 import { calendar_v3 } from 'googleapis';
 import config from '../config';
 
+// announces event as a discord embed
 export default async function announceEvent(event: calendar_v3.Schema$Event) {
     const channelId = '1113381023296790571';
     const rolesIds = ['1121715988006711337', '1121716021372395522'];
@@ -34,18 +35,15 @@ export default async function announceEvent(event: calendar_v3.Schema$Event) {
                         1000
                     }> to <t:${
                         new Date(event.end?.dateTime as string).valueOf() / 1000
-                    }:t>`,
-                    inline: true
+                    }:t>`
                 },
                 {
                     name: 'Location',
-                    value: event.location ?? 'N/A',
-                    inline: true
+                    value: event.location ?? 'N/A'
                 },
                 { name: 'Description', value: event.description ?? 'N/A' }
             ];
 
-            //TODO: better embed text
             const embed = new EmbedBuilder()
                 .setColor('Blue')
                 .setTitle(event.summary!)

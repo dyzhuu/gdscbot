@@ -12,7 +12,7 @@ export default function runScheduler() {
     // weeklySync notif 6:30pm thurs
     new CronJob('0 30 18 * * 4', () => weeklySync(), null, true);
 
-    // daily refresh for events
+    // daily refresh to fetch for upcoming events, and schedule them to run.
     new CronJob(
         '0 0 0 * * *',
         async () => {

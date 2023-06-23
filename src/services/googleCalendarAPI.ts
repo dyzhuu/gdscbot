@@ -11,6 +11,7 @@ const auth = new google.auth.JWT({
 });
 const calendar = google.calendar({ version: 'v3', auth });
 
+// creates notification channel
 async function sendWatchRequest(UUID: string) {
     const response = await calendar.events.watch(
         {
@@ -34,6 +35,7 @@ async function sendWatchRequest(UUID: string) {
     );
 }
 
+// stops notification channel
 async function stopChannel(id: string, resourceId: string) {
     await calendar.channels.stop({
         requestBody: {
@@ -43,7 +45,7 @@ async function stopChannel(id: string, resourceId: string) {
     });
 }
 
-// TODO: Change to no longer requiring sync token.
+// creates announcement if new event is created
 async function processEventUpdates() {
     // let syncToken;
     // if (fs.existsSync('syncToken.txt')) {
@@ -74,10 +76,10 @@ async function processEventUpdates() {
     }
 }
 
-//TODO: trigger this daily 12am and set cron
+//fetches events that are set to run in the next two days
 async function getNextEvents() {
     let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1); //FIXME: +1
+    tomorrow.setDate(tomorrow.getDate() + 1);
     let dayAfter = new Date();
     dayAfter.setDate(dayAfter.getDate() + 2);
 
