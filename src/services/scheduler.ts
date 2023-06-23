@@ -9,7 +9,7 @@ export default function runScheduler() {
     //write to google sheets every hour
     new CronJob('0 0 * * * *', () => sheets.writeName, null, true);
 
-    // weeklySync notif 6:30pm thurs
+    // weeklySync notification at 6:30pm every Thursday
     new CronJob('0 30 18 * * 4', () => weeklySync(), null, true);
 
     // daily refresh to fetch for upcoming events, and schedule them to run.
@@ -23,12 +23,9 @@ export default function runScheduler() {
             }
             console.log(events);
             events.forEach((event: calendar_v3.Schema$Event) => {
-                new CronJob(
-                    new Date(event.start!.dateTime as string),
-                    () => announceEvent(event),
-                    null,
-                    true
-                );
+                let dayBefore = new Date(event.start!.dateTime as string)
+                dayBefore.setDate(dayBefore.getDate() - 1);
+                new CronJob(dayBefore, () => announceEvent(event), null, true);
             });
         },
         null,

@@ -9,7 +9,6 @@
         "dev": "concurrently \"tsc -w\" \"nodemon build/index.js\"",
         "deploy:commands": "tsc && node build/deploy-commands.js",
         "create:channel": "tsc && node build/create-channel.js",
-        "sync": "tsc && node build/scheduled/weeklySync.js",
         "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
     },
     "keywords": [],

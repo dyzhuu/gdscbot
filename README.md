@@ -1,5 +1,5 @@
 TODO:
 
 -   Notification when new (non weekly sync) event is added
--   Ping 1 hour before weekly sync
+    - Is weekly-sync in the calendar?
 -   Ping 1 day before any non-weekly sync event ?

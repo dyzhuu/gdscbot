@@ -1,4 +1,4 @@
-import { calendar_v3, google } from 'googleapis';
+import { google } from 'googleapis';
 import Logging from '../library/Logging';
 import fs from 'fs';
 import config from '../config';
@@ -67,9 +67,7 @@ async function processEventUpdates() {
         // const nextSyncToken = result!.data.nextSyncToken as string;
         // fs.writeFileSync('syncToken.txt', nextSyncToken);
 
-        // TODO: HANDLE CREATED EVENT
-
-        Logging.info(event.summary);
+        Logging.info(`Event added: ${event.summary}`)
         announceEvent(event);
     } catch (e) {
         Logging.error(e);
