@@ -2,6 +2,7 @@ import { calendar_v3, google } from 'googleapis';
 import Logging from '../library/Logging';
 import fs from 'fs';
 import config from '../config';
+import announceEvent from '../announcements/announceEvent';
 
 const calendarId: string = config.CALENDAR_ID;
 const auth = new google.auth.JWT({
@@ -10,7 +11,7 @@ const auth = new google.auth.JWT({
 });
 const calendar = google.calendar({ version: 'v3', auth });
 
-export async function sendWatchRequest(UUID: string) {
+async function sendWatchRequest(UUID: string) {
     const response = await calendar.events.watch(
         {
             calendarId,
@@ -33,68 +34,65 @@ export async function sendWatchRequest(UUID: string) {
     );
 }
 
-export async function stopChannel(id: string, resourceId: string) {
+async function stopChannel(id: string, resourceId: string) {
     await calendar.channels.stop({
         requestBody: {
             id,
             resourceId
         }
-    })
+    });
 }
 
-// TODO: Change to no longer require sync token.
-export async function listCreatedEvents() {
-    let syncToken;
-    if (fs.existsSync('syncToken.txt')) {
-        syncToken = fs.readFileSync('syncToken.txt').toString();
-    }
-    await calendar.events.list(
-        {
+// TODO: Change to no longer requiring sync token.
+async function processEventUpdates() {
+    // let syncToken;
+    // if (fs.existsSync('syncToken.txt')) {
+    //     syncToken = fs.readFileSync('syncToken.txt').toString();
+    // }
+    try {
+        const result = await calendar.events.list({
             auth,
             calendarId,
-            syncToken,
-            // maxResults: 10,
-            // singleEvents: true,
-            // orderBy: 'startTime'
-        },
-        (e, res) => {
-            if (e) {
-                Logging.error(e);
-                return;
-            }
-            const event = res!.data.items!.filter(
-                (x) => Date.parse(x.created!) > new Date().valueOf() - 10000
-            )[0];
-            const nextSyncToken = res!.data.nextSyncToken as string;
-            fs.writeFileSync('syncToken.txt', nextSyncToken);
-            if (!event) {
-                return;
-            }
-            // TODO: HANDLE CREATED EVENT
-            Logging.info(event.summary);
+            timeMin: new Date().toISOString()
+            // syncToken,
+        });
+        const event = result!.data.items!.filter(
+            (x) => Date.parse(x.created!) > new Date().valueOf() - 10000
+        )[0];
+        if (!event) {
+            return;
         }
-    );
+        // const nextSyncToken = result!.data.nextSyncToken as string;
+        // fs.writeFileSync('syncToken.txt', nextSyncToken);
+
+        // TODO: HANDLE CREATED EVENT
+
+        Logging.info(event.summary);
+        announceEvent(event);
+    } catch (e) {
+        Logging.error(e);
+    }
 }
 
 //TODO: trigger this daily 12am and set cron
-export async function getNextEvents() {
+async function getNextEvents() {
     let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 0) //FIXME: +1
+    tomorrow.setDate(tomorrow.getDate() + 1); //FIXME: +1
     let dayAfter = new Date();
-    dayAfter.setDate(dayAfter.getDate() + 2)
+    dayAfter.setDate(dayAfter.getDate() + 2);
 
     try {
-        const results = await calendar.events.list(
-            {
-                auth,
-                calendarId,
-                timeMin: tomorrow.toISOString(),
-                timeMax: dayAfter.toISOString()
-            }
-        );
-        const event = results!.data.items
+        const results = await calendar.events.list({
+            auth,
+            calendarId,
+            timeMin: tomorrow.toISOString(),
+            timeMax: dayAfter.toISOString()
+        });
+        const event = results!.data.items;
         return event;
     } catch (e) {
         Logging.error(e);
     }
 }
+
+export default { sendWatchRequest, stopChannel, processEventUpdates, getNextEvents };
