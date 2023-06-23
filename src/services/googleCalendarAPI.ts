@@ -1,4 +1,4 @@
-import { google } from 'googleapis';
+import { calendar_v3, google } from 'googleapis';
 import Logging from '../library/Logging';
 import fs from 'fs';
 import config from '../config';
@@ -42,10 +42,7 @@ export async function stopChannel(id: string, resourceId: string) {
     })
 }
 
-export async function UpdateServer() {
-
-}
-
+// TODO: Change to no longer require sync token.
 export async function listCreatedEvents() {
     let syncToken;
     if (fs.existsSync('syncToken.txt')) {
@@ -55,7 +52,7 @@ export async function listCreatedEvents() {
         {
             auth,
             calendarId,
-            syncToken
+            syncToken,
             // maxResults: 10,
             // singleEvents: true,
             // orderBy: 'startTime'
@@ -73,7 +70,31 @@ export async function listCreatedEvents() {
             if (!event) {
                 return;
             }
+            // TODO: HANDLE CREATED EVENT
             Logging.info(event.summary);
         }
     );
+}
+
+//TODO: trigger this daily 12am and set cron
+export async function getNextEvents() {
+    let tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 0) //FIXME: +1
+    let dayAfter = new Date();
+    dayAfter.setDate(dayAfter.getDate() + 2)
+
+    try {
+        const results = await calendar.events.list(
+            {
+                auth,
+                calendarId,
+                timeMin: tomorrow.toISOString(),
+                timeMax: dayAfter.toISOString()
+            }
+        );
+        const event = results!.data.items
+        return event;
+    } catch (e) {
+        Logging.error(e);
+    }
 }

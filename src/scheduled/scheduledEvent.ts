@@ -1,8 +1,13 @@
-import { Client, TextChannel, EmbedBuilder, GatewayIntentBits } from 'discord.js';
+import {
+    Client,
+    TextChannel,
+    EmbedBuilder,
+} from 'discord.js';
 
 import Logging from '../library/Logging';
+import { calendar_v3 } from 'googleapis';
 
-export default async function weeklySync(client: Client) {
+export default async function announceEvent(client: Client, event: calendar_v3.Schema$Event) {
     const channelId = '1113381023296790571';
     const rolesIds = ['1121715988006711337', '1121716021372395522'];
     try {
@@ -14,14 +19,13 @@ export default async function weeklySync(client: Client) {
         //TODO: better embed text
         const embed = new EmbedBuilder()
             .setColor('Blue')
-            .setTitle('Weekly sync meeting in 1 hour!' + new Date());
+            .setTitle(event.summary! + event.start!.dateTime);
 
-        channel
-            .send({
-                content: `${rolesIds.map((roleId) => `<@&${roleId}>`).join(" ")}`,
-                embeds: [embed]
-            })
-            // .then(() => client.destroy());
+        channel.send({
+            content: `${rolesIds.map((roleId) => `<@&${roleId}>`).join(' ')}`,
+            embeds: [embed]
+        });
+        // .then(() => client.destroy());
     } catch (e) {
         Logging.error(e);
     }
