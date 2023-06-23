@@ -1,6 +1,6 @@
 import express, { urlencoded } from 'express';
 import Logging from '../library/Logging';
-import { stopChannel } from '../services/googleCalendarAPI';
+import { listCreatedEvents, stopChannel } from '../services/googleCalendarAPI';
 
 
 const app = express();
@@ -14,7 +14,7 @@ app.use(
 app.use(express.json());
 
 app.post('/hook', (req, res) => {
-    console.log('ping');
+    listCreatedEvents()
 });
 
 app.post('/stop', (req, res) => {

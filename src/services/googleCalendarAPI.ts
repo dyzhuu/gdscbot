@@ -42,18 +42,8 @@ export async function stopChannel(id: string, resourceId: string) {
     })
 }
 
-export async function checkCalendarAccess() {
-    try {
-        const response = await calendar.calendars.get({
-            calendarId
-        });
-        const userCalendar = response.data;
-        console.log(userCalendar);
-        return userCalendar;
-    } catch (error) {
-        console.error('Error checking calendar access:', error);
-        throw error;
-    }
+export async function UpdateServer() {
+
 }
 
 export async function listCreatedEvents() {
@@ -83,7 +73,7 @@ export async function listCreatedEvents() {
             if (!event) {
                 return;
             }
-            Logging.info(event);
+            Logging.info(event.summary);
         }
     );
 }
