@@ -1,13 +1,46 @@
 import { google } from 'googleapis';
 import Logging from '../library/Logging';
 import fs from 'fs';
+import config from '../config';
 
-const calendarId: string = process.env.CALENDAR_ID!;
+const calendarId: string = config.CALENDAR_ID;
 const auth = new google.auth.JWT({
     keyFile: 'credentials.json',
     scopes: 'https://www.googleapis.com/auth/calendar'
 });
 const calendar = google.calendar({ version: 'v3', auth });
+
+export async function sendWatchRequest(UUID: string) {
+    const response = await calendar.events.watch(
+        {
+            calendarId,
+            requestBody: {
+                id: UUID,
+                type: 'web_hook',
+                address: `${config.URL}/hook`
+            }
+        },
+        (e, res) => {
+            if (e) {
+                Logging.error(e);
+                return;
+            }
+            Logging.info(res?.data);
+            Logging.info(
+                `Notification channel successfully created (remember ID and resourceId !)`
+            );
+        }
+    );
+}
+
+export async function stopChannel(id: string, resourceId: string) {
+    await calendar.channels.stop({
+        requestBody: {
+            id,
+            resourceId
+        }
+    })
+}
 
 export async function checkCalendarAccess() {
     try {
@@ -37,7 +70,7 @@ export async function listCreatedEvents() {
             // singleEvents: true,
             // orderBy: 'startTime'
         },
-        function (e, res) {
+        (e, res) => {
             if (e) {
                 Logging.error(e);
                 return;
