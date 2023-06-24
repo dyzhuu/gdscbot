@@ -5,10 +5,10 @@
     "main": "src/server.ts",
     "scripts": {
         "build": "tsc",
-        "start": "node build/index.js",
+        "start": "tsc && node build/index.js",
         "dev": "concurrently \"tsc -w\" \"nodemon build/index.js\"",
-        "deploy:commands": "tsc && node build/deploy-commands.js",
-        "create:channel": "tsc && node build/create-channel.js",
+        "deploy-commands": "tsc && node build/deploy-commands.js",
+        "create-channel": "tsc && node build/create-channel.js",
         "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
     },
     "keywords": [],

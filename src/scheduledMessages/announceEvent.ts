@@ -12,8 +12,8 @@ import config from '../config';
 
 // announces event as a discord embed
 async function announceEvent(event: calendar_v3.Schema$Event) {
-    const channelId = config.ANNOUNCEMENT_ID;
-    const rolesIds = config.ROLE_IDS.split(' ');
+    const channelId = config.ANNOUNCEMENT_CHANNEL_ID;
+    const rolesIds = config.PING_ROLE_IDS.split(' ');
 
     const client = new Client({ intents: GatewayIntentBits.Guilds });
 

@@ -9,8 +9,8 @@ import Logging from '../library/Logging';
 import config from '../config';
 
 async function weeklySync() {
-    const channelId = config.SYNC_ID;
-    const rolesIds = config.ROLE_IDS.split(' ');
+    const channelId = config.SYNC_CHANNEL_ID;
+    const rolesIds = config.PING_ROLE_IDS.split(' ');
     const meetingTime = new Date().setHours(19, 30, 0, 0).valueOf() / 1000;
 
     const client = new Client({ intents: GatewayIntentBits.Guilds });

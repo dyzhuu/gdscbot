@@ -25,6 +25,7 @@ app.post('/stop', (req, res) => {
     calendar
         .stopChannel(id, resourceId)
         .then(() => {
+            Logging.info(`Notification channel ${id} stopped.`)
             res.status(200).json({ message: `Channel ${id} stopped` });
         })
         .catch((e) => {

@@ -7,9 +7,9 @@ const {
     SPREADSHEET_ID,
     CALENDAR_ID,
     URL,
-    SYNC_ID,
-    ANNOUNCEMENT_ID,
-    ROLE_IDS
+    SYNC_CHANNEL_ID,
+    ANNOUNCEMENT_CHANNEL_ID,
+    PING_ROLE_IDS
 } = process.env;
 if (!CLIENT_ID) {
     throw new Error('Missing Client Id');
@@ -23,11 +23,11 @@ if (!CLIENT_ID) {
     throw new Error('Missing Calendar Id');
 } else if (!URL) {
     throw new Error('Missing URL');
-} else if (!SYNC_ID) {
+} else if (!SYNC_CHANNEL_ID) {
     throw new Error('Missing Weekly Sync Channel Id');
-} else if (!ANNOUNCEMENT_ID) {
+} else if (!ANNOUNCEMENT_CHANNEL_ID) {
     throw new Error('Missing Event Announcement Channel Id');
-} else if (!ROLE_IDS) {
+} else if (!PING_ROLE_IDS) {
     throw new Error('Missing Role Ids');
 }
 
@@ -38,9 +38,9 @@ const config: Record<string, string> = {
     SPREADSHEET_ID,
     CALENDAR_ID,
     URL,
-    SYNC_ID,
-    ANNOUNCEMENT_ID,
-    ROLE_IDS
+    SYNC_CHANNEL_ID,
+    ANNOUNCEMENT_CHANNEL_ID,
+    PING_ROLE_IDS
 };
 
 export default config;

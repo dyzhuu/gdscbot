@@ -8,17 +8,7 @@ import Logging from '../library/Logging';
 
 function runScheduler() {
     //write to google sheets every hour
-    new CronJob('0 0 * * * *', () => sheets.writeName, null, true);
-
-    // weeklySync notification at 6:30pm every Thursday
-    // new CronJob(
-    //     '0 30 18 * * 4',
-    //     () => {
-    //         weeklySync();
-    //     },
-    //     null,
-    //     true
-    // );
+    new CronJob('0 0 */2 * * *', () => sheets.writeName, null, true);
 
     // daily refresh to fetch for upcoming events, and schedule them to run.
     new CronJob(
