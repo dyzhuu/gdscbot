@@ -10,7 +10,7 @@ const auth = new google.auth.JWT({
 const service = google.sheets('v4');
 
 /**
- * 
+ *
  * @param exec exec object to insert into google sheets
  */
 async function createExec(exec: Exec) {
@@ -77,7 +77,7 @@ async function getExec(column: number, value: string): Promise<Exec[] | void> {
 // }
 
 /**
- * 
+ *
  * @param exec new exec details to update with
  */
 async function updateExec(exec: Exec) {

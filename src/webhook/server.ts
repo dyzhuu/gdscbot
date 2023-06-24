@@ -22,7 +22,8 @@ app.post('/hook', (req, res) => {
 // for stopping notification channel
 app.post('/stop', (req, res) => {
     const { id, resourceId } = req.body;
-    calendar.stopChannel(id, resourceId)
+    calendar
+        .stopChannel(id, resourceId)
         .then(() => {
             res.status(200).json({ message: `Channel ${id} stopped` });
         })

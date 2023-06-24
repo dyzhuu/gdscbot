@@ -12,8 +12,8 @@ import config from '../config';
 
 // announces event as a discord embed
 export default async function announceEvent(event: calendar_v3.Schema$Event) {
-    const channelId = '1113381023296790571';
-    const rolesIds = ['1121715988006711337', '1121716021372395522'];
+    const channelId = config.ANNOUNCEMENT_ID;
+    const rolesIds = config.ROLE_IDS.split(' ');
 
     const client = new Client({ intents: GatewayIntentBits.Guilds });
 
@@ -41,12 +41,13 @@ export default async function announceEvent(event: calendar_v3.Schema$Event) {
                     name: 'Location',
                     value: event.location ?? 'N/A'
                 },
-                { name: 'Description', value: event.description ?? 'N/A' }
+                { name: 'Description', value: event.description ?? 'N/A' },
+                { name: 'Link to Calendar Event', value: event.htmlLink! }
             ];
 
             const embed = new EmbedBuilder()
                 .setColor('Blue')
-                .setTitle(event.summary!)
+                .setTitle(event.summary ?? 'N/A')
                 .setFields(...fields);
             channel
                 .send({

@@ -2,7 +2,8 @@ import { google } from 'googleapis';
 import Logging from '../library/Logging';
 import fs from 'fs';
 import config from '../config';
-import announceEvent from '../scheduledMessages/announceEvent';
+import { delayCreationAnnouncement } from './scheduler';
+import { logging } from 'googleapis/build/src/apis/logging';
 
 const calendarId: string = config.CALENDAR_ID;
 const auth = new google.auth.JWT({
@@ -67,14 +68,15 @@ async function processEventUpdates() {
         // const nextSyncToken = result!.data.nextSyncToken as string;
         // fs.writeFileSync('syncToken.txt', nextSyncToken);
 
-        Logging.info(`Event added: ${event.summary}`)
-        announceEvent(event);
+        Logging.info(`Event added: ${event.summary}`);
+
+        delayCreationAnnouncement(event);
     } catch (e) {
         Logging.error(e);
     }
 }
 
-//fetches events that are set to run in the next two days
+//fetches events that are set to run the day after
 async function getNextEvents() {
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -88,11 +90,47 @@ async function getNextEvents() {
             timeMin: tomorrow.toISOString(),
             timeMax: dayAfter.toISOString()
         });
-        const event = results!.data.items;
-        return event;
+        const events = results!.data.items!.filter(
+            (event) => event.summary !== 'Weekly Sync'
+        ); // FIXME:
+        return events;
     } catch (e) {
         Logging.error(e);
     }
 }
 
-export default { sendWatchRequest, stopChannel, processEventUpdates, getNextEvents };
+// gets and returns an event by id (limited to next two days)
+async function getEventById(id: string) {
+    try {
+        let dayAfter = new Date();
+        dayAfter.setDate(dayAfter.getDate() + 2);
+
+        const results = await calendar.events.list({
+            auth,
+            calendarId,
+            timeMin: new Date().toISOString(),
+            timeMax: dayAfter.toISOString()
+        });
+
+        const event = results!.data.items!.filter((event) =>
+            event.id!.includes(id)
+        );
+
+        Logging.info(event);
+        // if no id found, or duplicate id's (meaning a cancelled event entry) for recurring event
+        if (!event[0] || event.length > 1) {
+            return;
+        }
+        return event[0];
+    } catch (e) {
+        Logging.error(e);
+    }
+}
+
+export default {
+    sendWatchRequest,
+    stopChannel,
+    processEventUpdates,
+    getNextEvents,
+    getEventById
+};
