@@ -8,7 +8,7 @@ import {
 import Logging from '../library/Logging';
 import config from '../config';
 
-export default async function weeklySync() {
+async function weeklySync() {
     const channelId = config.SYNC_ID;
     const rolesIds = config.ROLE_IDS.split(' ');
     const meetingTime = new Date().setHours(19, 30, 0, 0).valueOf() / 1000;
@@ -37,3 +37,5 @@ export default async function weeklySync() {
             client.destroy();
         });
 }
+
+export default weeklySync

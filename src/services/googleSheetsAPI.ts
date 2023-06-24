@@ -38,11 +38,10 @@ async function createExec(exec: Exec) {
  * @returns array of array of exec details.
  */
 async function getExec(column: number, value: string): Promise<Exec[] | void> {
-    const range = 'A2:H';
     try {
         const result = await service.spreadsheets.values.get({
             spreadsheetId,
-            range,
+            range: 'A2:H',
             auth
         });
 
@@ -81,7 +80,6 @@ async function getExec(column: number, value: string): Promise<Exec[] | void> {
  * @param exec new exec details to update with
  */
 async function updateExec(exec: Exec) {
-    const range = 'A2:H';
     try {
         const nameResults = await service.spreadsheets.values.get({
             spreadsheetId,
@@ -107,11 +105,10 @@ async function updateExec(exec: Exec) {
 
 // writes names in local storage
 async function writeName() {
-    const range = 'A2:A';
     try {
         const result = await service.spreadsheets.values.get({
             spreadsheetId,
-            range,
+            range: 'A2:A',
             auth
         });
         const data = result.data.values!.flat(1).sort();

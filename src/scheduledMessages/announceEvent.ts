@@ -11,7 +11,7 @@ import { calendar_v3 } from 'googleapis';
 import config from '../config';
 
 // announces event as a discord embed
-export default async function announceEvent(event: calendar_v3.Schema$Event) {
+async function announceEvent(event: calendar_v3.Schema$Event) {
     const channelId = config.ANNOUNCEMENT_ID;
     const rolesIds = config.ROLE_IDS.split(' ');
 
@@ -63,3 +63,5 @@ export default async function announceEvent(event: calendar_v3.Schema$Event) {
             client.destroy();
         });
 }
+
+export default announceEvent

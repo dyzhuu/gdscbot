@@ -6,19 +6,19 @@ import weeklySync from '../scheduledMessages/weeklySync';
 import announceEvent from '../scheduledMessages/announceEvent';
 import Logging from '../library/Logging';
 
-export default function runScheduler() {
+function runScheduler() {
     //write to google sheets every hour
     new CronJob('0 0 * * * *', () => sheets.writeName, null, true);
 
     // weeklySync notification at 6:30pm every Thursday
-    new CronJob(
-        '0 30 18 * * 4',
-        () => {
-            weeklySync();
-        },
-        null,
-        true
-    );
+    // new CronJob(
+    //     '0 30 18 * * 4',
+    //     () => {
+    //         weeklySync();
+    //     },
+    //     null,
+    //     true
+    // );
 
     // daily refresh to fetch for upcoming events, and schedule them to run.
     new CronJob(
@@ -26,28 +26,31 @@ export default function runScheduler() {
         async () => {
             const events =
                 (await calendar.getNextEvents()) as calendar_v3.Schema$Event[];
-            if (!events[0]) {
-                return;
-            }
+
+            if (!events[0]) return;
+
             events.forEach((event: calendar_v3.Schema$Event) => {
-                // sends the event out 24 hours before they start
-                let dayBefore = new Date(event.start!.dateTime as string);
-                dayBefore.setDate(dayBefore.getDate() - 1);
+                let scheduledTime = new Date(event.start!.dateTime as string);
+                let announce = announceEvent
+                if (event.summary === 'Weekly Sync') {
+                    // sends the announcement 1 hour before
+                    scheduledTime.setHours(scheduledTime.getHours() - 1);
+                    announce = weeklySync
+                } else {
+                    // sends the event out 24 hours before it starts
+                    scheduledTime.setDate(scheduledTime.getDate() - 1);
+                }
                 new CronJob(
-                    dayBefore,
+                    scheduledTime,
                     async () => {
-                        try {
-                            // refreshes the event to latest version if there are any changes
-                            const refreshedEvent = await calendar.getEventById(
-                                event.id!
-                            );
-                            if (!refreshedEvent) {
-                                return;
-                            }
-                            announceEvent(refreshedEvent);
-                        } catch (e) {
-                            Logging.error(e);
-                        }
+                        // refreshes the event to latest version if there are any changes
+                        const refreshedEvent = await calendar.getEventById(
+                            event.id!
+                        );
+
+                        if (!refreshedEvent) return;
+
+                        announce(refreshedEvent)
                     },
                     null,
                     true
@@ -57,7 +60,6 @@ export default function runScheduler() {
         null,
         true
     );
-    return;
 }
 
 // delays the announcement for newly created events if between the hours of 9PM - 8AM
@@ -75,3 +77,5 @@ export function delayCreationAnnouncement(event: calendar_v3.Schema$Event) {
     }
     new CronJob(scheduledTime, () => announceEvent(event), null, true);
 }
+
+export default runScheduler

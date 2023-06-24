@@ -3,7 +3,6 @@ import Logging from '../library/Logging';
 import fs from 'fs';
 import config from '../config';
 import { delayCreationAnnouncement } from './scheduler';
-import { logging } from 'googleapis/build/src/apis/logging';
 
 const calendarId: string = config.CALENDAR_ID;
 const auth = new google.auth.JWT({
@@ -14,7 +13,8 @@ const calendar = google.calendar({ version: 'v3', auth });
 
 // creates notification channel
 async function sendWatchRequest(UUID: string) {
-    const response = await calendar.events.watch(
+    try {
+        const response = await calendar.events.watch(
         {
             calendarId,
             requestBody: {
@@ -22,18 +22,14 @@ async function sendWatchRequest(UUID: string) {
                 type: 'web_hook',
                 address: `${config.URL}/hook`
             }
-        },
-        (e, res) => {
-            if (e) {
-                Logging.error(e);
-                return;
-            }
-            Logging.info(res?.data);
-            Logging.info(
-                `Notification channel successfully created (remember ID and resourceId !)`
-            );
-        }
-    );
+        })
+        Logging.info(response?.data);
+        Logging.info(
+            `Notification channel successfully created (remember ID and resourceId !)`
+        );
+    } catch (e) {
+        Logging.error(e)
+    }
 }
 
 // stops notification channel
@@ -92,7 +88,7 @@ async function getNextEvents() {
         });
         const events = results!.data.items!.filter(
             (event) => event.summary !== 'Weekly Sync'
-        ); // FIXME:
+        ); // FIXME: change name? 
         return events;
     } catch (e) {
         Logging.error(e);
@@ -116,7 +112,6 @@ async function getEventById(id: string) {
             event.id!.includes(id)
         );
 
-        Logging.info(event);
         // if no id found, or duplicate id's (meaning a cancelled event entry) for recurring event
         if (!event[0] || event.length > 1) {
             return;
