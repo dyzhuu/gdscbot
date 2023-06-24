@@ -101,21 +101,20 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         .setTitle(exec.name);
     // .setThumbnail(interaction.user.displayAvatarURL());
 
-    return await sheets
-        .createExec(exec)
-        .then(() => {
-            Logging.info(exec);
+    try {
+        await sheets.createExec(exec)
+        Logging.info(exec);
             interaction.reply({
                 content: 'Details added into google sheets database:',
                 embeds: [embed],
                 ephemeral: true
             });
-        })
-        .catch((error) => {
-            Logging.error(error);
-            interaction.reply({
-                content: 'Failed to add details into database',
-                ephemeral: true
-            });
-        });
+    } catch (e) {
+        Logging.error(e);
+        const embed = new EmbedBuilder()
+            .setColor('Red')
+            .setTitle('Error')
+            .setDescription('Error adding details into database');
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+    }
 }

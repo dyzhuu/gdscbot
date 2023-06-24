@@ -59,7 +59,7 @@ async function announceEvent(event: calendar_v3.Schema$Event) {
                 .then(() => client.destroy());
         })
         .catch((e) => {
-            Logging.error(e);
+            Logging.error(e)
             client.destroy();
         });
 }

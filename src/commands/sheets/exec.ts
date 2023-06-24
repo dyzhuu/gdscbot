@@ -41,5 +41,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         interaction.reply({ embeds: [embed] });
     } catch (error) {
         Logging.error(error);
+        const embed = new EmbedBuilder()
+            .setColor('Red')
+            .setTitle('Error')
+            .setDescription('Error getting exec details');
+        return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 }

@@ -110,7 +110,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             .setFields(fields)
             .setTitle(`Updated Details for ${name}`);
 
-        return interaction.reply({ embeds: [embed] });
+        return interaction.reply({ embeds: [embed], ephemeral: true });
     } catch (error) {
         const embed = new EmbedBuilder()
             .setColor('Red')

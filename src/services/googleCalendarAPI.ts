@@ -56,7 +56,7 @@ async function processEventUpdates() {
             // syncToken,
         });
         const event = result!.data.items!.filter(
-            (x) => Date.parse(x.created!) > new Date().valueOf() - 10000
+            (x) => Date.parse(x.created!) > new Date().getTime() - 10000
         )[0];
         if (!event) {
             return;
@@ -74,25 +74,23 @@ async function processEventUpdates() {
 
 //fetches events that are set to run the day after
 async function getNextEvents() {
+    //FIXME:
+
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let dayAfter = new Date();
     dayAfter.setDate(dayAfter.getDate() + 2);
 
-    try {
-        const results = await calendar.events.list({
-            auth,
-            calendarId,
-            timeMin: tomorrow.toISOString(),
-            timeMax: dayAfter.toISOString()
-        });
-        const events = results!.data.items!.filter(
-            (event) => event.summary !== 'Weekly Sync'
-        ); // FIXME: change name? 
-        return events;
-    } catch (e) {
-        Logging.error(e);
-    }
+    const results = await calendar.events.list({
+        auth,
+        calendarId,
+        timeMin: tomorrow.toISOString(),
+        timeMax: dayAfter.toISOString()
+    });
+    const events = results!.data.items!.filter(
+        (event) => event.summary !== 'Weekly Sync' && new Date(event.start?.dateTime as string).getTime() > tomorrow.getTime()
+    ); // FIXME: change name? 
+    return events;
 }
 
 // gets and returns an event by id (limited to next two days)
