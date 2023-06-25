@@ -1,6 +1,5 @@
 import { google } from 'googleapis';
 import Logging from '../library/Logging';
-import fs from 'fs';
 import config from '../config';
 import { delayCreationAnnouncement } from './scheduler';
 
@@ -14,19 +13,22 @@ const calendar = google.calendar({ version: 'v3', auth });
 // creates notification channel
 async function sendWatchRequest(UUID: string) {
     try {
+        const time = new Date()
+
         const response = await calendar.events.watch(
         {
             calendarId,
             requestBody: {
                 id: UUID,
                 type: 'web_hook',
-                address: `${config.URL}/hook`
+                address: `${config.URL}/hook`,
             }
         })
-        Logging.info(response?.data);
         Logging.info(
-            `Notification channel successfully created (remember ID and resourceId !)`
-        );
+            `Notification channel successfully created`
+            );
+        Logging.info(response!.data);
+        return response.data
     } catch (e) {
         Logging.error(e)
     }
@@ -44,10 +46,6 @@ async function stopChannel(id: string, resourceId: string) {
 
 // creates announcement if new event is created
 async function processEventUpdates() {
-    // let syncToken;
-    // if (fs.existsSync('syncToken.txt')) {
-    //     syncToken = fs.readFileSync('syncToken.txt').toString();
-    // }
     try {
         const result = await calendar.events.list({
             auth,
@@ -61,8 +59,6 @@ async function processEventUpdates() {
         if (!event) {
             return;
         }
-        // const nextSyncToken = result!.data.nextSyncToken as string;
-        // fs.writeFileSync('syncToken.txt', nextSyncToken);
 
         Logging.info(`Event added: ${event.summary}`);
 
@@ -74,7 +70,6 @@ async function processEventUpdates() {
 
 //fetches events that are set to run the day after
 async function getNextEvents() {
-    //FIXME:
 
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -88,8 +83,7 @@ async function getNextEvents() {
         timeMax: dayAfter.toISOString()
     });
     const events = results!.data.items!.filter(
-        (event) => event.summary !== 'Weekly Sync' && new Date(event.start?.dateTime as string).getTime() > tomorrow.getTime()
-    ); // FIXME: change name? 
+        (event) => new Date(event.start?.dateTime as string).getTime() > tomorrow.getTime());
     return events;
 }
 

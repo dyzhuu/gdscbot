@@ -7,7 +7,7 @@ import announceEvent from '../scheduledMessages/announceEvent';
 import Logging from '../library/Logging';
 
 function runScheduler() {
-    //write to google sheets every hour
+    //write to google sheets every other hour
     new CronJob('0 0 */2 * * *', () => sheets.writeName, null, true);
 
     // daily refresh to fetch for upcoming events, and schedule them to run.
@@ -23,10 +23,10 @@ function runScheduler() {
                 events.forEach((event: calendar_v3.Schema$Event) => {
                     let scheduledTime = new Date(event.start!.dateTime as string);
                     let announce = announceEvent
-                    if (event.summary === 'Weekly Sync') {
+                    if (event.summary === '💻 Weekly Sync') {
                         // sends the announcement 1 hour before
                         scheduledTime.setHours(scheduledTime.getHours() - 1);
-                        announce = weeklySync
+                        announce = weeklySync;
                     } else {
                         // sends the event out 24 hours before it starts
                         scheduledTime.setDate(scheduledTime.getDate() - 1);
@@ -41,7 +41,7 @@ function runScheduler() {
 
                             if (!refreshedEvent) return;
 
-                            announce(refreshedEvent)
+                            announce(refreshedEvent, 'REMINDER: Event tomorrow!')
                         },
                         null,
                         true
@@ -63,13 +63,13 @@ export function delayCreationAnnouncement(event: calendar_v3.Schema$Event) {
     scheduledTime.setHours(8, 0, 0, 0);
 
     if (hourCreated >= 8 && hourCreated <= 20) {
-        announceEvent(event);
+        announceEvent(event, 'New Event Created:');
         return;
     }
     if (hourCreated > 20) {
         scheduledTime.setDate(scheduledTime.getDate() + 1);
     }
-    new CronJob(scheduledTime, () => announceEvent(event), null, true);
+    new CronJob(scheduledTime, () => announceEvent(event, 'New Event Created:'), null, true);
 }
 
 export default runScheduler

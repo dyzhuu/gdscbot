@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT ?? 9090;
+const PORT = process.env.PORT || 9090;
 
 app.use(
     urlencoded({
@@ -19,7 +19,7 @@ app.post('/hook', (req, res) => {
     calendar.processEventUpdates();
 });
 
-// for stopping notification channel
+// for stopping notification channel just in case
 app.post('/stop', (req, res) => {
     const { id, resourceId } = req.body;
     calendar

@@ -9,26 +9,29 @@ const {
     URL,
     SYNC_CHANNEL_ID,
     ANNOUNCEMENT_CHANNEL_ID,
-    PING_ROLE_IDS
+    PING_ROLE_IDS,
+    UUID
 } = process.env;
 if (!CLIENT_ID) {
-    throw new Error('Missing Client Id');
+    throw new Error('Missing Client ID environment variable');
 } else if (!GUILD_ID) {
-    throw new Error('Missing Guild Id');
+    throw new Error('Missing Guild ID environment variable');
 } else if (!TOKEN) {
-    throw new Error('Missing Token');
+    throw new Error('Missing Token environment variable');
 } else if (!SPREADSHEET_ID) {
-    throw new Error('Missing Spreadsheet Id');
+    throw new Error('Missing Spreadsheet ID environment variable');
 } else if (!CALENDAR_ID) {
-    throw new Error('Missing Calendar Id');
+    throw new Error('Missing Calendar ID environment variable');
 } else if (!URL) {
-    throw new Error('Missing URL');
+    throw new Error('Missing URL environment variable');
 } else if (!SYNC_CHANNEL_ID) {
-    throw new Error('Missing Weekly Sync Channel Id');
+    throw new Error('Missing Weekly Sync Channel ID environment variable');
 } else if (!ANNOUNCEMENT_CHANNEL_ID) {
-    throw new Error('Missing Event Announcement Channel Id');
+    throw new Error('Missing Event Announcement Channel ID ');
 } else if (!PING_ROLE_IDS) {
-    throw new Error('Missing Role Ids');
+    throw new Error('Missing Role IDs environment variable');
+} else if (!UUID) {
+    throw new Error('Missing UUID environment variable');
 }
 
 const config: Record<string, string> = {
@@ -40,7 +43,8 @@ const config: Record<string, string> = {
     URL,
     SYNC_CHANNEL_ID,
     ANNOUNCEMENT_CHANNEL_ID,
-    PING_ROLE_IDS
+    PING_ROLE_IDS,
+    UUID
 };
 
 export default config;

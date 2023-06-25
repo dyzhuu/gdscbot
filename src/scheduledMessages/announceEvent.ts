@@ -11,7 +11,7 @@ import { calendar_v3 } from 'googleapis';
 import config from '../config';
 
 // announces event as a discord embed
-async function announceEvent(event: calendar_v3.Schema$Event) {
+async function announceEvent(event: calendar_v3.Schema$Event, message: string) {
     const channelId = config.ANNOUNCEMENT_CHANNEL_ID;
     const rolesIds = config.PING_ROLE_IDS.split(' ');
 
@@ -41,19 +41,21 @@ async function announceEvent(event: calendar_v3.Schema$Event) {
                     name: 'Location',
                     value: event.location ?? 'N/A'
                 },
-                { name: 'Description', value: event.description ?? 'N/A' },
-                { name: 'Link to Calendar Event', value: event.htmlLink! }
             ];
 
             const embed = new EmbedBuilder()
                 .setColor('Blue')
                 .setTitle(event.summary ?? 'N/A')
-                .setFields(...fields);
+                .setDescription(event.description || ' ')
+                .setFields(...fields)
+                .setThumbnail(
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/1024px-Google_Calendar_icon_%282020%29.svg.png?20221106121915'
+                );
             channel
                 .send({
                     content: `${rolesIds
                         .map((roleId) => `<@&${roleId}>`)
-                        .join(' ')}`,
+                        .join(' ')}\n${message}`,
                     embeds: [embed]
                 })
                 .then(() => client.destroy());
