@@ -1,3 +1,5 @@
 import './bot';
 import './webhook/server';
-import './create-channel'
+
+// muting event creation pings.
+// import './create-channel'
