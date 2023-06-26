@@ -1,8 +1,7 @@
 import { google } from 'googleapis';
 import Logging from '../library/Logging';
-import fs from 'fs';
 import config from '../config';
-import announceEvent from '../scheduledMessages/announceEvent';
+import { delayCreationAnnouncement } from './scheduler';
 
 const calendarId: string = config.CALENDAR_ID;
 const auth = new google.auth.JWT({
@@ -13,26 +12,26 @@ const calendar = google.calendar({ version: 'v3', auth });
 
 // creates notification channel
 async function sendWatchRequest(UUID: string) {
-    const response = await calendar.events.watch(
+    try {
+        const time = new Date()
+
+        const response = await calendar.events.watch(
         {
             calendarId,
             requestBody: {
                 id: UUID,
                 type: 'web_hook',
-                address: `${config.URL}/hook`
+                address: `${config.URL}/hook`,
             }
-        },
-        (e, res) => {
-            if (e) {
-                Logging.error(e);
-                return;
-            }
-            Logging.info(res?.data);
-            Logging.info(
-                `Notification channel successfully created (remember ID and resourceId !)`
+        })
+        Logging.info(
+            `Notification channel successfully created`
             );
-        }
-    );
+        Logging.info(response!.data);
+        return response.data
+    } catch (e) {
+        Logging.error(e)
+    }
 }
 
 // stops notification channel
@@ -47,10 +46,6 @@ async function stopChannel(id: string, resourceId: string) {
 
 // creates announcement if new event is created
 async function processEventUpdates() {
-    // let syncToken;
-    // if (fs.existsSync('syncToken.txt')) {
-    //     syncToken = fs.readFileSync('syncToken.txt').toString();
-    // }
     try {
         const result = await calendar.events.list({
             auth,
@@ -59,40 +54,70 @@ async function processEventUpdates() {
             // syncToken,
         });
         const event = result!.data.items!.filter(
-            (x) => Date.parse(x.created!) > new Date().valueOf() - 10000
+            (x) => Date.parse(x.created!) > new Date().getTime() - 10000
         )[0];
         if (!event) {
             return;
         }
-        // const nextSyncToken = result!.data.nextSyncToken as string;
-        // fs.writeFileSync('syncToken.txt', nextSyncToken);
 
-        Logging.info(`Event added: ${event.summary}`)
-        announceEvent(event);
+        Logging.info(`Event added: ${event.summary}`);
+
+        delayCreationAnnouncement(event);
     } catch (e) {
         Logging.error(e);
     }
 }
 
-//fetches events that are set to run in the next two days
+//fetches events that are set to run the day after
 async function getNextEvents() {
+
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let dayAfter = new Date();
     dayAfter.setDate(dayAfter.getDate() + 2);
 
+    const results = await calendar.events.list({
+        auth,
+        calendarId,
+        timeMin: tomorrow.toISOString(),
+        timeMax: dayAfter.toISOString()
+    });
+    const events = results!.data.items!.filter(
+        (event) => new Date(event.start?.dateTime as string).getTime() > tomorrow.getTime());
+    return events;
+}
+
+// gets and returns an event by id (limited to next two days)
+async function getEventById(id: string) {
     try {
+        let dayAfter = new Date();
+        dayAfter.setDate(dayAfter.getDate() + 2);
+
         const results = await calendar.events.list({
             auth,
             calendarId,
-            timeMin: tomorrow.toISOString(),
+            timeMin: new Date().toISOString(),
             timeMax: dayAfter.toISOString()
         });
-        const event = results!.data.items;
-        return event;
+
+        const event = results!.data.items!.filter((event) =>
+            event.id!.includes(id)
+        );
+
+        // if no id found, or duplicate id's (meaning a cancelled event entry) for recurring event
+        if (!event[0] || event.length > 1) {
+            return;
+        }
+        return event[0];
     } catch (e) {
         Logging.error(e);
     }
 }
 
-export default { sendWatchRequest, stopChannel, processEventUpdates, getNextEvents };
+export default {
+    sendWatchRequest,
+    stopChannel,
+    processEventUpdates,
+    getNextEvents,
+    getEventById
+};

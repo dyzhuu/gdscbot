@@ -53,14 +53,10 @@ export const data = new SlashCommandBuilder()
     );
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-    if (!interaction?.channelId) {
-        return;
-    }
+    if (!interaction?.channelId) return;
 
     const channel = await client.channels.fetch(interaction.channelId);
-    if (!channel || channel.type !== ChannelType.GuildText) {
-        return;
-    }
+    if (!channel || channel.type !== ChannelType.GuildText) return;
 
     const fields: APIEmbedField[] = interaction.options.data
         .map((x, index) => {

@@ -7,6 +7,7 @@ import {
 } from 'discord.js';
 import fs from 'fs';
 import sheets from '../../services/googleSheetsAPI';
+import Logging from '../../library/Logging';
 
 // const filterChoices = JSON.parse(fs.readFileSync('names.txt').toString()).map((choice: string) => ({ name: choice, value: choice }));
 
@@ -61,11 +62,11 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             .setTitle(name);
 
         return interaction.reply({ embeds: [embed] });
-    } catch (error) {
+    } catch (e) {
+        Logging.error(e)
         const embed = new EmbedBuilder()
             .setColor('Red')
-            .setTitle('Error')
-            .setDescription('Exec not found');
+            .setTitle('Error getting exec details')
         return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 }

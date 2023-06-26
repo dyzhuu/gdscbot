@@ -10,11 +10,10 @@ const auth = new google.auth.JWT({
 const service = google.sheets('v4');
 
 /**
- * 
+ *
  * @param exec exec object to insert into google sheets
  */
 async function createExec(exec: Exec) {
-    try {
         await service.spreadsheets.values.append({
             spreadsheetId,
             auth,
@@ -26,9 +25,6 @@ async function createExec(exec: Exec) {
         });
         await writeName();
         return;
-    } catch (error) {
-        Logging.error(error);
-    }
 }
 
 /**
@@ -38,23 +34,18 @@ async function createExec(exec: Exec) {
  * @returns array of array of exec details.
  */
 async function getExec(column: number, value: string): Promise<Exec[] | void> {
-    const range = 'A2:H';
-    try {
-        const result = await service.spreadsheets.values.get({
-            spreadsheetId,
-            range,
-            auth
-        });
+    const result = await service.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'A2:H',
+        auth
+    });
 
-        const sheetValues: string[][] = result.data.values!.filter(
-            (row) => row[column - 1] === value
-        );
-        const exec = sheetValues.map((details) => dboToObject(details));
+    const sheetValues: string[][] = result.data.values!.filter(
+        (row) => row[column - 1] === value
+    );
+    const exec = sheetValues.map((details) => dboToObject(details));
 
-        return exec;
-    } catch (error) {
-        Logging.error(error);
-    }
+    return exec;
 }
 
 // async function getAllExec() {
@@ -77,41 +68,35 @@ async function getExec(column: number, value: string): Promise<Exec[] | void> {
 // }
 
 /**
- * 
+ *
  * @param exec new exec details to update with
  */
 async function updateExec(exec: Exec) {
-    const range = 'A2:H';
-    try {
-        const nameResults = await service.spreadsheets.values.get({
-            spreadsheetId,
-            range: 'A2:A',
-            majorDimension: 'Columns',
-            auth
-        });
-        const row = nameResults.data.values![0].indexOf(exec.name) + 2;
+    const nameResults = await service.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'A2:A',
+        majorDimension: 'Columns',
+        auth
+    });
+    const row = nameResults.data.values![0].indexOf(exec.name) + 2;
 
-        await service.spreadsheets.values.update({
-            spreadsheetId,
-            range: `A${row}:H${row}`,
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-                values: [Object.values(exec)]
-            },
-            auth
-        });
-    } catch (error) {
-        Logging.error(error);
-    }
+    await service.spreadsheets.values.update({
+        spreadsheetId,
+        range: `A${row}:H${row}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+            values: [Object.values(exec)]
+        },
+        auth
+    });
 }
 
 // writes names in local storage
 async function writeName() {
-    const range = 'A2:A';
     try {
         const result = await service.spreadsheets.values.get({
             spreadsheetId,
-            range,
+            range: 'A2:A',
             auth
         });
         const data = result.data.values!.flat(1).sort();

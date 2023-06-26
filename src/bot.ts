@@ -15,7 +15,7 @@ export const client = new Client({
 
 client.once(Events.ClientReady, (c) => {
     Logging.info(`🤖 Ready! Logged in as ${c.user.tag}`);
-    runScheduler()
+    runScheduler();
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
