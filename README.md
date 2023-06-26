@@ -28,6 +28,7 @@
    yarn create-channel
    ```
    Remember the `id` & `resourceId` to shut down the channel in the future
+
 4. Run the bot
    ```
    yarn start
