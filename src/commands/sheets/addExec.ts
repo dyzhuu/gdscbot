@@ -6,6 +6,7 @@ import {
 } from 'discord.js';
 import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
+import gdscColor from '../../library/colours';
 
 const roleChoices = [
     { name: 'General Executive 💼', value: 'General Executive' },
@@ -96,7 +97,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     ];
 
     const embed = new EmbedBuilder()
-        .setColor('Blue')
+        .setColor(gdscColor())
         .setFields(fields)
         .setTitle(exec.name);
     // .setThumbnail(interaction.user.displayAvatarURL());
@@ -112,7 +113,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     } catch (e) {
         Logging.error(e);
         const embed = new EmbedBuilder()
-            .setColor('Red')
+            .setColor('#DB4437')
             .setTitle('Error')
             .setDescription('Error adding details into database');
         return interaction.reply({ embeds: [embed], ephemeral: true });

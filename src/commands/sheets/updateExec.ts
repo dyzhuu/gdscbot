@@ -8,6 +8,7 @@ import {
 import fs from 'fs';
 import sheets from '../../services/googleSheetsAPI';
 import Exec from '../../models/Exec';
+import gdscColor from '../../library/colours';
 
 // TODO: import choices
 const roleChoices = [
@@ -106,14 +107,14 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             }));
 
         const embed = new EmbedBuilder()
-            .setColor('Blue')
+            .setColor(gdscColor())
             .setFields(fields)
             .setTitle(`Updated Details for ${name}`);
 
         return interaction.reply({ embeds: [embed], ephemeral: true });
     } catch (error) {
         const embed = new EmbedBuilder()
-            .setColor('Red')
+            .setColor('#DB4437')
             .setTitle('Error')
             .setDescription('Failed to update details');
         return interaction.reply({ embeds: [embed], ephemeral: true });

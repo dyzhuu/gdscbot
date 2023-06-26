@@ -8,6 +8,7 @@ import {
 import fs from 'fs';
 import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
+import gdscColor from '../../library/colours';
 
 // const filterChoices = JSON.parse(fs.readFileSync('names.txt').toString()).map((choice: string) => ({ name: choice, value: choice }));
 
@@ -57,7 +58,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         ];
 
         const embed = new EmbedBuilder()
-            .setColor('Blue')
+            .setColor(gdscColor())
             .setFields(fields)
             .setTitle(name);
 
@@ -65,8 +66,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     } catch (e) {
         Logging.error(e)
         const embed = new EmbedBuilder()
-            .setColor('Red')
-            .setTitle('Error getting exec details')
+            .setColor('#DB4437')
+            .setTitle('Error getting exec details');
         return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 }
