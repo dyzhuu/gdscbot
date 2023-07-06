@@ -40,14 +40,14 @@ async function announceEvent(event: calendar_v3.Schema$Event, message: string) {
                 {
                     name: 'Location',
                     value: event.location ?? 'N/A'
-                },
+                }
             ];
 
             const embed = new EmbedBuilder()
                 .setColor('Blue')
                 .setTitle(event.summary ?? 'N/A')
                 .setDescription(event.description || ' ')
-                .setFields(...fields)
+                .setFields(...fields);
             channel
                 .send({
                     content: `${rolesIds
@@ -58,9 +58,9 @@ async function announceEvent(event: calendar_v3.Schema$Event, message: string) {
                 .then(() => client.destroy());
         })
         .catch((e) => {
-            Logging.error(e)
+            Logging.error(e);
             client.destroy();
         });
 }
 
-export default announceEvent
+export default announceEvent;

@@ -2,7 +2,10 @@ import { google } from 'googleapis';
 import Exec from '../models/Exec';
 import Logging from '../library/Logging';
 import fs from 'fs';
-const spreadsheetId = process.env.SPREADSHEET_ID;
+import config from '../config';
+
+const spreadsheetId = config.SPREADSHEET_ID;
+
 const auth = new google.auth.JWT({
     keyFile: 'credentials.json',
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
@@ -14,17 +17,17 @@ const service = google.sheets('v4');
  * @param exec exec object to insert into google sheets
  */
 async function createExec(exec: Exec) {
-        await service.spreadsheets.values.append({
-            spreadsheetId,
-            auth,
-            range: 'A2:H',
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-                values: [Object.values(exec)]
-            }
-        });
-        await writeName();
-        return;
+    await service.spreadsheets.values.append({
+        spreadsheetId,
+        auth,
+        range: 'A2:H',
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+            values: [Object.values(exec)]
+        }
+    });
+    await writeName();
+    return;
 }
 
 /**

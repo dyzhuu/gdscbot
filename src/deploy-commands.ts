@@ -24,10 +24,6 @@ const rest = new REST().setToken(config.TOKEN);
             `Started refreshing ${commands.length} application (/) commands.`
         );
 
-        // rest.put(Routes.applicationGuildCommands(config.CLIENT_ID, config.GUILD_ID), { body: [] })
-        // .then(() => console.log('Successfully deleted all guild commands.'))
-        // .catch(console.error);
-
         const data = (await rest.put(
             Routes.applicationGuildCommands(config.CLIENT_ID, config.GUILD_ID),
             { body: commands }
@@ -39,6 +35,8 @@ const rest = new REST().setToken(config.TOKEN);
         Logging.info(
             `Successfully reloaded ${data.length} application (/) commands.`
         );
+        process.exit(0);
+
     } catch (e) {
         Logging.error(e);
     }

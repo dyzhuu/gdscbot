@@ -10,7 +10,6 @@ const auth = new google.auth.JWT({
 const calendar = google.calendar({ version: 'v3', auth });
 //fetches events that are set to run the day after
 async function getNextEvents() {
-
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let dayAfter = new Date();
@@ -23,7 +22,10 @@ async function getNextEvents() {
         timeMax: dayAfter.toISOString()
     });
     const events = results!.data.items!.filter(
-        (event) => new Date(event.start?.dateTime as string).getTime() > tomorrow.getTime());
+        (event) =>
+            new Date(event.start?.dateTime as string).getTime() >
+            tomorrow.getTime()
+    );
     return events;
 }
 

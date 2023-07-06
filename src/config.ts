@@ -1,17 +1,18 @@
 import dotenv from 'dotenv';
 dotenv.config();
+
 const {
     CLIENT_ID,
     GUILD_ID,
     TOKEN,
     SPREADSHEET_ID,
     CALENDAR_ID,
-    URL,
     SYNC_CHANNEL_ID,
     ANNOUNCEMENT_CHANNEL_ID,
     PING_ROLE_IDS,
-    UUID
+    CREDENTIALS
 } = process.env;
+
 if (!CLIENT_ID) {
     throw new Error('Missing Client ID environment variable');
 } else if (!GUILD_ID) {
@@ -22,16 +23,14 @@ if (!CLIENT_ID) {
     throw new Error('Missing Spreadsheet ID environment variable');
 } else if (!CALENDAR_ID) {
     throw new Error('Missing Calendar ID environment variable');
-} else if (!URL) {
-    throw new Error('Missing URL environment variable');
 } else if (!SYNC_CHANNEL_ID) {
     throw new Error('Missing Weekly Sync Channel ID environment variable');
 } else if (!ANNOUNCEMENT_CHANNEL_ID) {
     throw new Error('Missing Event Announcement Channel ID ');
 } else if (!PING_ROLE_IDS) {
     throw new Error('Missing Role IDs environment variable');
-} else if (!UUID) {
-    throw new Error('Missing UUID environment variable');
+} else if (!CREDENTIALS) {
+    throw new Error('Missing Credentials');
 }
 
 const config: Record<string, string> = {
@@ -40,11 +39,10 @@ const config: Record<string, string> = {
     TOKEN,
     SPREADSHEET_ID,
     CALENDAR_ID,
-    URL,
     SYNC_CHANNEL_ID,
     ANNOUNCEMENT_CHANNEL_ID,
     PING_ROLE_IDS,
-    UUID
+    CREDENTIALS
 };
 
 export default config;

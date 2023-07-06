@@ -96,13 +96,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         .setTitle(exec.name);
 
     try {
-        await sheets.createExec(exec)
+        await sheets.createExec(exec);
         Logging.info(exec);
-            interaction.reply({
-                content: 'Details added into google sheets database:',
-                embeds: [embed],
-                ephemeral: true
-            });
+        interaction.reply({
+            content: 'Details added into google sheets database:',
+            embeds: [embed],
+            ephemeral: true
+        });
     } catch (e) {
         Logging.error(e);
         const embed = new EmbedBuilder()

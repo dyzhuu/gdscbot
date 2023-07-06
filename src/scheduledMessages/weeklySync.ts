@@ -38,4 +38,4 @@ async function weeklySync() {
         });
 }
 
-export default weeklySync
+export default weeklySync;

@@ -50,10 +50,10 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
     try {
         if (!interaction?.channelId) return;
-    
+
         const channel = await client.channels.fetch(interaction.channelId);
         if (!channel || channel.type !== ChannelType.GuildText) return;
-    
+
         const fields: APIEmbedField[] = interaction.options.data
             .map((x, index) => {
                 return {
@@ -64,25 +64,25 @@ export async function execute(interaction: ChatInputCommandInteraction) {
                 };
             })
             .slice(1);
-    
+
         const embed = new EmbedBuilder()
             .setColor(googleColor())
             .setTitle(interaction.options.getString('question'))
-            .setFields(fields)
-    
+            .setFields(fields);
+
         // const message = await interaction.channel!.send({ embeds: [embed] });
 
         const poll = await interaction.reply({
             embeds: [embed],
             fetchReply: true
         });
-    
+
         for (let i = 1; i <= fields.length; i++) {
             await poll.react(
                 `${number_emojis[i as keyof typeof number_emojis]}`
             );
         }
     } catch (e) {
-        Logging.error(e)
+        Logging.error(e);
     }
 }

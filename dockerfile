@@ -1,4 +1,4 @@
-FROM node:20-bullseye-slim
+FROM node:slim
 
 WORKDIR /app
 
@@ -7,5 +7,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+
+RUN npm run build
 
 CMD ["npm", "start"]
