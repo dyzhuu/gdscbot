@@ -39,5 +39,6 @@ const rest = new REST().setToken(config.TOKEN);
 
     } catch (e) {
         Logging.error(e);
+        Logging.error("RESTART THE APPLICATION");
     }
 })();

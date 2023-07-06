@@ -35,3 +35,6 @@
     "resourceId": "<resourceId>"
 }
 ```
+
+### Run docker
+`docker run --name {container_name} --env-file ./.env 434331138cb40f8c1d20e46165ea944a335b0c0aa73aeb210ae9c008bc0cd484`

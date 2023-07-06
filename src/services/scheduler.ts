@@ -44,9 +44,7 @@ function runScheduler() {
                             if (!refreshedEvent) return;
 
                             announce(
-                                refreshedEvent,
-                                'REMINDER: Event tomorrow!'
-                            );
+                                refreshedEvent);
                         },
                         null,
                         true
