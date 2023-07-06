@@ -6,13 +6,8 @@ import {
 } from 'discord.js';
 import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
-
-const roleChoices = [
-    { name: 'General Executive 💼', value: 'General Executive' },
-    { name: 'Marketing Executive 📈💡', value: 'Marketing Executive' },
-    { name: 'Secretary 📝👤', value: 'Secretary' },
-    { name: 'Treasurer 💰📊', value: 'Treasurer' }
-];
+import googleColor from '../../library/colours';
+import { roleChoices } from '../../library/constants';
 
 export const data = new SlashCommandBuilder()
     .setName('addexec')
@@ -96,10 +91,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     ];
 
     const embed = new EmbedBuilder()
-        .setColor('Blue')
+        .setColor(googleColor())
         .setFields(fields)
         .setTitle(exec.name);
-    // .setThumbnail(interaction.user.displayAvatarURL());
 
     try {
         await sheets.createExec(exec)
@@ -112,9 +106,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     } catch (e) {
         Logging.error(e);
         const embed = new EmbedBuilder()
-            .setColor('Red')
-            .setTitle('Error')
-            .setDescription('Error adding details into database');
+            .setColor('#DB4437')
+            .setTitle('Error adding details into database');
         return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 }

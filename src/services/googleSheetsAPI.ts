@@ -36,7 +36,7 @@ async function createExec(exec: Exec) {
 async function getExec(column: number, value: string): Promise<Exec[] | void> {
     const result = await service.spreadsheets.values.get({
         spreadsheetId,
-        range: 'A2:H',
+        range: 'A2:I',
         auth
     });
 
@@ -47,25 +47,6 @@ async function getExec(column: number, value: string): Promise<Exec[] | void> {
 
     return exec;
 }
-
-// async function getAllExec() {
-//     const range = 'Sheet1!A2:H30';
-//     try {
-//         const result = await service.spreadsheets.values.get({
-//             spreadsheetId,
-//             range,
-//             auth
-//         });
-
-//         const execs = result.data.values!.map((details) =>
-//             dboToObject(details)
-//         );
-
-//         return;
-//     } catch (error) {
-//         Logging.error(error);
-//     }
-// }
 
 /**
  *

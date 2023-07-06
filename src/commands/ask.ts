@@ -1,11 +1,12 @@
 import {
-    APIEmbedField,
     ChannelType,
     ChatInputCommandInteraction,
     EmbedBuilder,
     SlashCommandBuilder
 } from 'discord.js';
 import { client } from '../bot';
+import googleColor from '../library/colours';
+import Logging from '../library/Logging';
 
 export const data = new SlashCommandBuilder()
     .setName('ask')
@@ -18,23 +19,27 @@ export const data = new SlashCommandBuilder()
     );
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-    if (!interaction?.channelId) return;
+    try {
+        if (!interaction?.channelId) return;
+    
+        const channel = await client.channels.fetch(interaction.channelId);
+        if (!channel || channel.type !== ChannelType.GuildText) return;
+    
+        const embed = new EmbedBuilder()
+            .setColor(googleColor())
+            .setTitle(interaction.options.getString('question'))
+    
+        // const message = await interaction.channel!.send({ embeds: [embed] });
+        
+        const poll = await interaction.reply({
+            embeds: [embed],
+            fetchReply: true
+        });
 
-    const channel = await client.channels.fetch(interaction.channelId);
-    if (!channel || channel.type !== ChannelType.GuildText) return;
+        await poll.react('✅');
+        await poll.react('❌');
 
-    const embed = new EmbedBuilder()
-        .setColor('Blue')
-        .setTitle(interaction.options.getString('question'))
-        .setTimestamp();
-
-    const message = await interaction.channel!.send({ embeds: [embed] });
-
-    await message.react('✅');
-    await message.react('❌');
-
-    return interaction.reply({
-        content: 'Poll created!',
-        ephemeral: true
-    });
+    } catch (e) {
+        Logging.error(e)
+    }
 }

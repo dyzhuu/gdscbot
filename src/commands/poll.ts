@@ -6,6 +6,8 @@ import {
     SlashCommandBuilder
 } from 'discord.js';
 import { client } from '../bot';
+import googleColor from '../library/colours';
+import Logging from '../library/Logging';
 
 const number_emojis = {
     1: '1️⃣',
@@ -17,7 +19,7 @@ const number_emojis = {
 
 export const data = new SlashCommandBuilder()
     .setName('poll')
-    .setDescription('Creates a poll')
+    .setDescription('Creates a multiple choice poll')
     .addStringOption((option) =>
         option
             .setName('question')
@@ -53,38 +55,41 @@ export const data = new SlashCommandBuilder()
     );
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-    if (!interaction?.channelId) return;
+    try {
+        if (!interaction?.channelId) return;
+    
+        const channel = await client.channels.fetch(interaction.channelId);
+        if (!channel || channel.type !== ChannelType.GuildText) return;
+    
+        const fields: APIEmbedField[] = interaction.options.data
+            .map((x, index) => {
+                return {
+                    name: `${
+                        number_emojis[index as keyof typeof number_emojis]
+                    } : ${x.value}`,
+                    value: '\n'
+                };
+            })
+            .slice(1);
+    
+        const embed = new EmbedBuilder()
+            .setColor(googleColor())
+            .setTitle(interaction.options.getString('question'))
+            .setFields(fields)
+    
+        // const message = await interaction.channel!.send({ embeds: [embed] });
 
-    const channel = await client.channels.fetch(interaction.channelId);
-    if (!channel || channel.type !== ChannelType.GuildText) return;
-
-    const fields: APIEmbedField[] = interaction.options.data
-        .map((x, index) => {
-            return {
-                name: `${
-                    number_emojis[index as keyof typeof number_emojis]
-                } : ${x.value}`,
-                value: '\n'
-            };
-        })
-        .slice(1);
-
-    const embed = new EmbedBuilder()
-        .setColor('Blue')
-        .setTitle(interaction.options.getString('question'))
-        .setFields(fields)
-        .setTimestamp();
-
-    const message = await interaction.channel!.send({ embeds: [embed] });
-
-    for (let i = 1; i <= fields.length; i++) {
-        await message.react(
-            `${number_emojis[i as keyof typeof number_emojis]}`
-        );
+        const poll = await interaction.reply({
+            embeds: [embed],
+            fetchReply: true
+        });
+    
+        for (let i = 1; i <= fields.length; i++) {
+            await poll.react(
+                `${number_emojis[i as keyof typeof number_emojis]}`
+            );
+        }
+    } catch (e) {
+        Logging.error(e)
     }
-
-    return interaction.reply({
-        content: 'Poll created!',
-        ephemeral: true
-    });
 }
