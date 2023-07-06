@@ -10,4 +10,8 @@ COPY . .
 
 RUN npm run build
 
+ENV TZ=Pacific/Auckland
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 CMD ["npm", "start"]
