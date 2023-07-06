@@ -1,5 +1,5 @@
 import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import gdscColor from '../library/colours';
+import googleColor from '../library/colours';
 
 export const data = new SlashCommandBuilder()
     .setName('help')
@@ -8,7 +8,7 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: CommandInteraction) {
     
     const embed = new EmbedBuilder()
-        .setColor(gdscColor())
+        .setColor(googleColor())
         .setTitle('How to use the GDSC Bot')
         .setFields(
             {
@@ -17,7 +17,7 @@ export async function execute(interaction: CommandInteraction) {
             },
             {
                 name: 'Information Commands',
-                value: "`/get`: Retrieve someone's details from the google sheet\n`/add`: Add your information to the google sheet\n`/update`: Update your information in the google sheet"
+                value: "`/getexec`: Retrieve someone's details from the google sheet\n`/addexec`: Add your information to the google sheet\n`/updateexec`: Update your information in the google sheet"
             }
         );
         ;

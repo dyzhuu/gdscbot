@@ -5,7 +5,7 @@ import {
     SlashCommandBuilder
 } from 'discord.js';
 import { client } from '../bot';
-import gdscColor from '../library/colours';
+import googleColor from '../library/colours';
 import Logging from '../library/Logging';
 
 export const data = new SlashCommandBuilder()
@@ -26,7 +26,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         if (!channel || channel.type !== ChannelType.GuildText) return;
     
         const embed = new EmbedBuilder()
-            .setColor(gdscColor())
+            .setColor(googleColor())
             .setTitle(interaction.options.getString('question'))
     
         // const message = await interaction.channel!.send({ embeds: [embed] });

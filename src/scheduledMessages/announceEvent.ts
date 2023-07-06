@@ -48,9 +48,6 @@ async function announceEvent(event: calendar_v3.Schema$Event, message: string) {
                 .setTitle(event.summary ?? 'N/A')
                 .setDescription(event.description || ' ')
                 .setFields(...fields)
-                .setThumbnail(
-                    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/1024px-Google_Calendar_icon_%282020%29.svg.png?20221106121915'
-                );
             channel
                 .send({
                     content: `${rolesIds

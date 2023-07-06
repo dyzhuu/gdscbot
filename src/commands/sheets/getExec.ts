@@ -8,11 +8,7 @@ import {
 import fs from 'fs';
 import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
-import gdscColor from '../../library/colours';
-
-// const filterChoices = JSON.parse(fs.readFileSync('names.txt').toString()).map((choice: string) => ({ name: choice, value: choice }));
-
-// const execNames = fs.readFileSync('names.txt').toString()
+import googleColor from '../../library/colours';
 
 export const data = new SlashCommandBuilder()
     .setName('getexec')
@@ -26,7 +22,6 @@ export const data = new SlashCommandBuilder()
                 )
                 .setRequired(true)
                 .setAutocomplete(true)
-        // .setChoices(...filterChoices)
     );
 
 export async function autocomplete(interaction: AutocompleteInteraction) {
@@ -58,10 +53,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         ];
 
         const embed = new EmbedBuilder()
-            .setColor(gdscColor())
+            .setColor(googleColor())
             .setFields(fields)
-            .setTitle(name);
-
+            .setTitle(name)
         return interaction.reply({ embeds: [embed] });
     } catch (e) {
         Logging.error(e)

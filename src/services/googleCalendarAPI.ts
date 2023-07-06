@@ -10,7 +10,7 @@ const auth = new google.auth.JWT({
 });
 const calendar = google.calendar({ version: 'v3', auth });
 
-// creates notification channel
+// creates notification channel for webhooks 
 async function sendWatchRequest(UUID: string) {
     try {
         const time = new Date()
@@ -44,7 +44,7 @@ async function stopChannel(id: string, resourceId: string) {
     });
 }
 
-// creates announcement if new event is created
+// creates announcement if new event is created (called by webhook)
 async function processEventUpdates() {
     try {
         const result = await calendar.events.list({

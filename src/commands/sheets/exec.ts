@@ -6,7 +6,7 @@ import {
 } from 'discord.js';
 import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
-import gdscColor from '../../library/colours';
+import googleColor from '../../library/colours';
 
 export const data = new SlashCommandBuilder()
     .setName('exec')
@@ -33,7 +33,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         ];
 
         const embed = new EmbedBuilder()
-            .setColor(gdscColor())
+            .setColor(googleColor())
             .setFields(fields)
             .setTitle(exec.name)
             .setThumbnail(
@@ -44,8 +44,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         Logging.error(error);
         const embed = new EmbedBuilder()
             .setColor('#DB4437')
-            .setTitle('Error')
-            .setDescription('Error getting exec details');
+            .setTitle('Error getting exec details');
         return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 }

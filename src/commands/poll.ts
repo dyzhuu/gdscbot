@@ -6,7 +6,7 @@ import {
     SlashCommandBuilder
 } from 'discord.js';
 import { client } from '../bot';
-import gdscColor from '../library/colours';
+import googleColor from '../library/colours';
 import Logging from '../library/Logging';
 
 const number_emojis = {
@@ -73,7 +73,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             .slice(1);
     
         const embed = new EmbedBuilder()
-            .setColor(gdscColor())
+            .setColor(googleColor())
             .setTitle(interaction.options.getString('question'))
             .setFields(fields)
     
