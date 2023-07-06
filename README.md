@@ -14,10 +14,6 @@
    SYNC_ID=<id of the channel to receive weekly sync pings>
    ANNOUNCEMENT_ID=<id of the channel to receive announcements>
    PING_ROLE_IDS=<id of roles to ping (space separated)>
-
-   URL=<API endpoint url>
-   UUID=<UUID>
-   PORT=<PORT>
    ```
    Bottom three variables are only required if enabling event creation pings
 
