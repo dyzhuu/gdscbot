@@ -56,20 +56,4 @@ function runScheduler() {
     );
 }
 
-// delays the announcement for newly created events if between the hours of 9PM - 8AM
-export function delayCreationAnnouncement(event: calendar_v3.Schema$Event) {
-    let scheduledTime = new Date(event.created as string);
-    const hourCreated = scheduledTime.getHours();
-    scheduledTime.setHours(8, 0, 0, 0);
-
-    if (hourCreated >= 8 && hourCreated <= 20) {
-        announceEvent(event, 'New Event Created:');
-        return;
-    }
-    if (hourCreated > 20) {
-        scheduledTime.setDate(scheduledTime.getDate() + 1);
-    }
-    new CronJob(scheduledTime, () => announceEvent(event, 'New Event Created:'), null, true);
-}
-
 export default runScheduler

@@ -4,3 +4,11 @@ export const roleChoices = [
     { name: 'Secretary 📝👤', value: 'Secretary' },
     { name: 'Treasurer 💰📊', value: 'Treasurer' }
 ];
+
+export const number_emojis = {
+    1: '1️⃣',
+    2: '2️⃣',
+    3: '3️⃣',
+    4: '4️⃣',
+    5: '5️⃣'
+};

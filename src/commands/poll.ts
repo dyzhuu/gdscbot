@@ -8,14 +8,7 @@ import {
 import { client } from '../bot';
 import googleColor from '../library/colours';
 import Logging from '../library/Logging';
-
-const number_emojis = {
-    1: '1️⃣',
-    2: '2️⃣',
-    3: '3️⃣',
-    4: '4️⃣',
-    5: '5️⃣'
-};
+import { number_emojis } from '../library/constants';
 
 export const data = new SlashCommandBuilder()
     .setName('poll')
