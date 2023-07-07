@@ -1,7 +1,3 @@
-<a href="https://console.cloud.google.com/apis/library/sheets.googleapis.com">Google Sheets API</a>
-
-<a href="https://console.cloud.google.com/apis/library/calendar-json.googleapis.com">Google Calendar API</a>
-
 ## Setup
 
 1. Create a `.env` file in the root directory and enter the following environment variables:
@@ -19,23 +15,8 @@
    UUID=<UUID>
    PORT=<PORT>
    ```
-   Bottom three variables are only required if enabling event creation pings
 
-2. Deploy commands to the bot
+2. Run the command
    ```sh
-   yarn deploy-commands
+   npm start
    ```
-
-3. Run the bot
-   ```
-   yarn start
-   ```
-
-### Stopping notification channels
-`POST` to `URL/stop`
-```json
-{
-    "id": "<id>",
-    "resourceId": "<resourceId>"
-}
-```
