@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+  discordbot:
+    # image: ghcr.io/dyzhuu/discordbot:latest
+    build: .
+    container_name: discordbot
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - TZ=${TZ:-Pacific/Auckland}
+      - TOKEN
+      - CLIENT_ID
+      - GUILD_ID
+      - SPREADSHEET_ID
+      - CALENDAR_ID
+      - SYNC_ID
+      - ANNOUNCEMENT_ID
+      - PING_ROLE_IDS
+      - URL
+      - UUID
+      - PORT
+  autoheal:
+    restart: unless-stopped
+    image: willfarrell/autoheal
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+      - TZ=${TZ:-Pacific/Auckland}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - discordbot

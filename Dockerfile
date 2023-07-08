@@ -1,4 +1,4 @@
-FROM node:20-bullseye-slim
+FROM node:18-alpine3.18
 
 WORKDIR /app
 
@@ -8,4 +8,4 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
