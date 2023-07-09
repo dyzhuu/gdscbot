@@ -68,10 +68,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
     let exec = sheets.dboToObject([
         ...values,
-        interaction.options.getString('dietary_requirements') ?? 'N/A',
-        interaction.options.getString('shirt_size') ?? 'N/A',
-        interaction.options.getString('year_graduating') ?? 'N/A',
-        interaction.options.getString('degree') ?? 'N/A'
+        interaction.options.getString('dietary_requirements') ?? '-',
+        interaction.options.getString('shirt_size') ?? '-',
+        interaction.options.getString('year_graduating') ?? '-',
+        interaction.options.getString('degree') ?? '-'
     ]);
 
     exec.name = exec.name
@@ -80,14 +80,18 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         .map((x: string) => x.charAt(0).toUpperCase() + x.slice(1))
         .join(' ');
 
-    const fields: APIEmbedField[] = [
-        { name: 'Role: ', value: exec.role },
-        { name: 'Email: ', value: exec.email },
-        { name: 'Phone Number: ', value: exec.phoneNumber },
+    const remainingFields = [
         { name: 'Dietary Requirements', value: exec.dietaryRequirements },
         { name: 'Shirt Size', value: exec.shirtSize },
         { name: 'Year Graduating', value: exec.yearGraduating },
         { name: 'Degree', value: exec.degree }
+    ].filter((field) => field.value !== '-');
+
+    const fields: APIEmbedField[] = [
+        { name: 'Role: ', value: exec.role },
+        { name: 'Email: ', value: exec.email },
+        { name: 'Phone Number: ', value: exec.phoneNumber },
+        ...remainingFields
     ];
 
     const embed = new EmbedBuilder()
