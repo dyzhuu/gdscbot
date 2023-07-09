@@ -9,9 +9,13 @@ import {
 import Logging from '../library/Logging';
 import { calendar_v3 } from 'googleapis';
 import config from '../config';
+import googleColor from '../library/colours';
 
 // announces event as a discord embed
-async function announceEvent(event: calendar_v3.Schema$Event, message: string) {
+async function announceEvent(
+    event: calendar_v3.Schema$Event,
+    message: string = ''
+) {
     const channelId = config.ANNOUNCEMENT_CHANNEL_ID;
     const rolesIds = config.PING_ROLE_IDS.split(' ');
 
@@ -40,14 +44,14 @@ async function announceEvent(event: calendar_v3.Schema$Event, message: string) {
                 {
                     name: 'Location',
                     value: event.location ?? 'N/A'
-                },
+                }
             ];
 
             const embed = new EmbedBuilder()
-                .setColor('Blue')
+                .setColor(googleColor())
                 .setTitle(event.summary ?? 'N/A')
                 .setDescription(event.description || ' ')
-                .setFields(...fields)
+                .setFields(...fields);
             channel
                 .send({
                     content: `${rolesIds
@@ -58,9 +62,9 @@ async function announceEvent(event: calendar_v3.Schema$Event, message: string) {
                 .then(() => client.destroy());
         })
         .catch((e) => {
-            Logging.error(e)
+            Logging.error(e);
             client.destroy();
         });
 }
 
-export default announceEvent
+export default announceEvent;

@@ -1,9 +1,9 @@
 version: "3.3"
 services:
-  discordbot:
-    # image: ghcr.io/dyzhuu/discordbot:latest
+  gdscbot:
+    # image: ghcr.io/dyzhuu/gdscbot:latest
     build: .
-    container_name: discordbot
+    container_name: gdscbot
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -16,9 +16,7 @@ services:
       - SYNC_ID
       - ANNOUNCEMENT_ID
       - PING_ROLE_IDS
-      - URL
-      - UUID
-      - PORT
+      - CREDENTIALSJSON
   autoheal:
     restart: unless-stopped
     image: willfarrell/autoheal
@@ -28,4 +26,4 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
-      - discordbot
+      - gdscbot

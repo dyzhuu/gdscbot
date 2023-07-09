@@ -7,6 +7,7 @@ import {
 
 import Logging from '../library/Logging';
 import config from '../config';
+import googleColor from '../library/colours';
 
 async function weeklySync() {
     const channelId = config.SYNC_CHANNEL_ID;
@@ -24,11 +25,16 @@ async function weeklySync() {
                 Logging.error(`Channel ${channelId} does not exist`);
             }
 
+            const embed = new EmbedBuilder()
+                .setColor(googleColor())
+                .setDescription(`Weekly sync <t:${meetingTime}:R>!`);
+
             channel
                 .send({
                     content: `${rolesIds
                         .map((roleId) => `<@&${roleId}>`)
-                        .join(' ')} Weekly sync <t:${meetingTime}:R>!`
+                        .join(' ')}`,
+                    embeds: [embed]
                 })
                 .then(() => client.destroy());
         })
@@ -38,4 +44,4 @@ async function weeklySync() {
         });
 }
 
-export default weeklySync
+export default weeklySync;

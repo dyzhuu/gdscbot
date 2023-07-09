@@ -1,5 +1,5 @@
 {
-    "name": "project--dc-bot",
+    "name": "gdscbot",
     "version": "1.0.0",
     "description": "",
     "main": "src/server.ts",
@@ -8,8 +8,7 @@
         "prebuild": "npm run prettier-format",
         "build": "tsc",
         "prestart": "npm run build",
-        "start": "node build/index.js",
-
+        "start": "node build/write-creds.js && node build/deploy-commands.js && node build/index.js",
         "dev": "concurrently \"tsc -w\" \"nodemon build/index.js\"",
         "deploy-commands": "tsc && node build/deploy-commands.js",
         "create-channel": "tsc && node build/create-channel.js"

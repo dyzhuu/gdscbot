@@ -10,27 +10,24 @@ const auth = new google.auth.JWT({
 });
 const calendar = google.calendar({ version: 'v3', auth });
 
-// creates notification channel for webhooks 
+// creates notification channel for webhooks
 async function sendWatchRequest(UUID: string) {
     try {
-        const time = new Date()
+        const time = new Date();
 
-        const response = await calendar.events.watch(
-        {
+        const response = await calendar.events.watch({
             calendarId,
             requestBody: {
                 id: UUID,
                 type: 'web_hook',
-                address: `${config.URL}/hook`,
+                address: `${config.URL}/hook`
             }
-        })
-        Logging.info(
-            `Notification channel successfully created`
-            );
+        });
+        Logging.info(`Notification channel successfully created`);
         Logging.info(response!.data);
-        return response.data
+        return response.data;
     } catch (e) {
-        Logging.error(e)
+        Logging.error(e);
     }
 }
 
@@ -70,7 +67,6 @@ async function processEventUpdates() {
 
 //fetches events that are set to run the day after
 async function getNextEvents() {
-
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let dayAfter = new Date();
@@ -83,7 +79,10 @@ async function getNextEvents() {
         timeMax: dayAfter.toISOString()
     });
     const events = results!.data.items!.filter(
-        (event) => new Date(event.start?.dateTime as string).getTime() > tomorrow.getTime());
+        (event) =>
+            new Date(event.start?.dateTime as string).getTime() >
+            tomorrow.getTime()
+    );
     return events;
 }
 

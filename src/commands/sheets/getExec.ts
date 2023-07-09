@@ -13,15 +13,12 @@ import googleColor from '../../library/colours';
 export const data = new SlashCommandBuilder()
     .setName('getexec')
     .setDescription('Retrieves executive details from the google sheet')
-    .addStringOption(
-        (option) =>
-            option
-                .setName('name')
-                .setDescription(
-                    'Enter the name of the exec whose details to get'
-                )
-                .setRequired(true)
-                .setAutocomplete(true)
+    .addStringOption((option) =>
+        option
+            .setName('name')
+            .setDescription('Enter the name of the exec whose details to get')
+            .setRequired(true)
+            .setAutocomplete(true)
     );
 
 export async function autocomplete(interaction: AutocompleteInteraction) {
@@ -55,10 +52,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         const embed = new EmbedBuilder()
             .setColor(googleColor())
             .setFields(fields)
-            .setTitle(name)
+            .setTitle(name);
         return interaction.reply({ embeds: [embed] });
     } catch (e) {
-        Logging.error(e)
+        Logging.error(e);
         const embed = new EmbedBuilder()
             .setColor('#DB4437')
             .setTitle('Error getting exec details');

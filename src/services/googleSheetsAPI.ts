@@ -14,17 +14,17 @@ const service = google.sheets('v4');
  * @param exec exec object to insert into google sheets
  */
 async function createExec(exec: Exec) {
-        await service.spreadsheets.values.append({
-            spreadsheetId,
-            auth,
-            range: 'A2:H',
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-                values: [Object.values(exec)]
-            }
-        });
-        await writeName();
-        return;
+    await service.spreadsheets.values.append({
+        spreadsheetId,
+        auth,
+        range: 'A2:H',
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+            values: [Object.values(exec)]
+        }
+    });
+    await writeName();
+    return;
 }
 
 /**

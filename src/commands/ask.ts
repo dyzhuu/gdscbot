@@ -21,16 +21,16 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
     try {
         if (!interaction?.channelId) return;
-    
+
         const channel = await client.channels.fetch(interaction.channelId);
         if (!channel || channel.type !== ChannelType.GuildText) return;
-    
+
         const embed = new EmbedBuilder()
             .setColor(googleColor())
-            .setTitle(interaction.options.getString('question'))
-    
+            .setTitle(interaction.options.getString('question'));
+
         // const message = await interaction.channel!.send({ embeds: [embed] });
-        
+
         const poll = await interaction.reply({
             embeds: [embed],
             fetchReply: true
@@ -38,8 +38,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
         await poll.react('✅');
         await poll.react('❌');
-
     } catch (e) {
-        Logging.error(e)
+        Logging.error(e);
     }
 }

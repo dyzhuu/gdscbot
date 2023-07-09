@@ -21,8 +21,10 @@ function runScheduler() {
                 if (!events[0]) return;
 
                 events.forEach((event: calendar_v3.Schema$Event) => {
-                    let scheduledTime = new Date(event.start!.dateTime as string);
-                    let announce = announceEvent
+                    let scheduledTime = new Date(
+                        event.start!.dateTime as string
+                    );
+                    let announce = announceEvent;
                     if (event.summary === '💻 Weekly Sync') {
                         // sends the announcement 1 hour before
                         scheduledTime.setHours(scheduledTime.getHours() - 1);
@@ -41,14 +43,14 @@ function runScheduler() {
 
                             if (!refreshedEvent) return;
 
-                            announce(refreshedEvent, 'REMINDER: Event tomorrow!')
+                            announce(refreshedEvent);
                         },
                         null,
                         true
                     );
                 });
             } catch (e) {
-                Logging.error(e)
+                Logging.error(e);
             }
         },
         null,
@@ -69,7 +71,12 @@ export function delayCreationAnnouncement(event: calendar_v3.Schema$Event) {
     if (hourCreated > 20) {
         scheduledTime.setDate(scheduledTime.getDate() + 1);
     }
-    new CronJob(scheduledTime, () => announceEvent(event, 'New Event Created:'), null, true);
+    new CronJob(
+        scheduledTime,
+        () => announceEvent(event, 'New Event Created:'),
+        null,
+        true
+    );
 }
 
-export default runScheduler
+export default runScheduler;
