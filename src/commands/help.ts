@@ -19,7 +19,7 @@ export async function execute(interaction: CommandInteraction) {
                 value: '`/ask`: creates a poll with ✅/❌  \n`/poll`: creates a multi-choice poll '
             },
             {
-                name: 'Information Commands',
+                name: 'Google Sheets Commands',
                 value: "`/getexec`: Retrieve someone's details from the google sheet\n`/addexec`: Add your information to the google sheet\n`/updateexec`: Update your information in the google sheet"
             }
         );
