@@ -9,7 +9,7 @@ import fs from 'fs';
 import sheets from '../../services/googleSheetsAPI';
 import Exec from '../../models/Exec';
 import googleColor from '../../library/colours';
-import { roleChoices } from '../../library/constants';
+import { execPropertyFormatter, roleChoices } from '../../library/constants';
 
 export const data = new SlashCommandBuilder()
     .setName('updateexec')
@@ -95,8 +95,16 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         const fields: APIEmbedField[] = Object.entries(updatedExec)
             .filter((x) => x[1] !== exec[x[0] as keyof typeof exec])
             .map((x) => ({
-                name: `${x[0].charAt(0).toUpperCase() + x[0].slice(1)}: `,
-                value: `${exec[x[0] as keyof typeof exec]} → ${x[1]}`
+                name: `${
+                    execPropertyFormatter[
+                        x[0] as keyof typeof execPropertyFormatter
+                    ]
+                }: `,
+                value: `${
+                    exec[x[0] as keyof typeof exec] == '-'
+                        ? 'none'
+                        : exec[x[0] as keyof typeof exec]
+                } → ${x[1]}`
             }));
 
         const embed = new EmbedBuilder()
