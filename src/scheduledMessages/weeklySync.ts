@@ -13,6 +13,9 @@ import { calendar_v3 } from 'googleapis';
 async function weeklySync(event: calendar_v3.Schema$Event) {
     const channelId = config.SYNC_CHANNEL_ID;
     const rolesIds = config.PING_ROLE_IDS.split(' ');
+    const meetingTime =
+        new Date(event.start?.dateTime as string).setSeconds(0, 0).valueOf() /
+        1000;
 
     const client = new Client({ intents: GatewayIntentBits.Guilds });
     client
@@ -27,12 +30,7 @@ async function weeklySync(event: calendar_v3.Schema$Event) {
 
             const embed = new EmbedBuilder()
                 .setColor(googleColor())
-                .setDescription(
-                    `Weekly sync <t:${
-                        new Date(event.start?.dateTime as string).valueOf() /
-                        1000
-                    }:R>!`
-                );
+                .setDescription(`Weekly sync <t:${meetingTime}:R>!`);
 
             channel
                 .send({
