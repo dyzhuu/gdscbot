@@ -13,8 +13,8 @@ services:
       - GUILD_ID
       - SPREADSHEET_ID
       - CALENDAR_ID
-      - SYNC_ID
-      - ANNOUNCEMENT_ID
+      - SYNC_CHANNEL_ID
+      - ANNOUNCEMENT_CHANNEL_ID
       - PING_ROLE_IDS
       - CREDENTIALS_JSON
   autoheal:
