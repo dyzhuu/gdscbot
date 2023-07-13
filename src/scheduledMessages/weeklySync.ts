@@ -8,11 +8,11 @@ import {
 import Logging from '../library/Logging';
 import config from '../config';
 import googleColor from '../library/colours';
+import { calendar_v3 } from 'googleapis';
 
-async function weeklySync() {
+async function weeklySync(event: calendar_v3.Schema$Event) {
     const channelId = config.SYNC_CHANNEL_ID;
     const rolesIds = config.PING_ROLE_IDS.split(' ');
-    const meetingTime = new Date().setHours(19, 30, 0, 0).valueOf() / 1000;
 
     const client = new Client({ intents: GatewayIntentBits.Guilds });
     client
@@ -27,7 +27,12 @@ async function weeklySync() {
 
             const embed = new EmbedBuilder()
                 .setColor(googleColor())
-                .setDescription(`Weekly sync <t:${meetingTime}:R>!`);
+                .setDescription(
+                    `Weekly sync <t:${
+                        new Date(event.start?.dateTime as string).valueOf() /
+                        1000
+                    }:R>!`
+                );
 
             channel
                 .send({
