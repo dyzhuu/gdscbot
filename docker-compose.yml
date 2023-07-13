@@ -16,7 +16,7 @@ services:
       - SYNC_ID
       - ANNOUNCEMENT_ID
       - PING_ROLE_IDS
-      - CREDENTIALSJSON
+      - CREDENTIALS_JSON
   autoheal:
     restart: unless-stopped
     image: willfarrell/autoheal
