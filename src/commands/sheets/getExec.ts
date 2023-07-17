@@ -53,7 +53,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             .setColor(googleColor())
             .setFields(fields)
             .setTitle(name);
-        return interaction.reply({ embeds: [embed] });
+        return interaction.reply({ embeds: [embed], ephemeral: true });
     } catch (e) {
         Logging.error(e);
         const embed = new EmbedBuilder()
