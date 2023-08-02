@@ -26,6 +26,15 @@ function runScheduler() {
                     );
                     let announce = announceEvent;
                     if (event.summary === '💻 Weekly Sync') {
+                        // calculates the time to send out the message based on the start time of weekly recurring events
+                        const weeksPassed = Math.floor(
+                            (new Date().getTime() - scheduledTime.getTime()) /
+                                (7 * 24 * 60 * 60 * 1000)
+                        );
+                        scheduledTime = new Date(
+                            scheduledTime.getTime() +
+                                (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
+                        );
                         // sends the announcement 1 hour before
                         scheduledTime.setHours(scheduledTime.getHours() - 1);
                         announce = weeklySync;
