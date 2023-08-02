@@ -16,7 +16,7 @@ export async function execute(interaction: CommandInteraction) {
         .setFields(
             {
                 name: 'General Commands',
-                value: '`/ask`: creates a poll with ✅/❌  \n`/poll`: creates a multi-choice poll '
+                value: '`/ask`: creates a poll with ✅/❌  \n`/poll`: creates a multi-choice poll \n`/embed`: creates a discord embed'
             },
             {
                 name: 'Google Sheets Commands',

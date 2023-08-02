@@ -70,8 +70,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             .setTitle(interaction.options.getString('question'))
             .setFields(fields);
 
-        // const message = await interaction.channel!.send({ embeds: [embed] });
-
         const poll = await interaction.reply({
             embeds: [embed],
             fetchReply: true
