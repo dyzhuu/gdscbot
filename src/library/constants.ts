@@ -6,15 +6,15 @@ export const roleChoices = [
 ];
 
 export const execPropertyFormatter = {
-    "name": "Name",
-    "role": "Role",
-    "email": "Email",
-    "phoneNumber": "Phone Number",
-    "dietaryRequirements": "Dietary Requirements",
-    "shirtSize": "Shirt Size",
-    "yearGraduating": "Year Graduating",
-    "degree": "Degree",
-}
+    name: 'Name',
+    role: 'Role',
+    email: 'Email',
+    phoneNumber: 'Phone Number',
+    dietaryRequirements: 'Dietary Requirements',
+    shirtSize: 'Shirt Size',
+    yearGraduating: 'Year Graduating',
+    degree: 'Degree'
+};
 
 export const number_emojis = {
     1: '1️⃣',

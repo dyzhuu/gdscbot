@@ -1,4 +1,5 @@
 import {
+    APIEmbedField,
     ChannelType,
     ChatInputCommandInteraction,
     EmbedBuilder,
@@ -7,14 +8,21 @@ import {
 import { client } from '../bot';
 import googleColor from '../library/colours';
 import Logging from '../library/Logging';
+import { number_emojis } from '../library/constants';
 
 export const data = new SlashCommandBuilder()
-    .setName('ask')
-    .setDescription('Creates a yes/no poll')
+    .setName('embed')
+    .setDescription('Creates an embed')
     .addStringOption((option) =>
         option
-            .setName('question')
-            .setDescription('Provide the question here')
+            .setName('title')
+            .setDescription('Provide the title text')
+            .setRequired(true)
+    )
+    .addStringOption((option) =>
+        option
+            .setName('description')
+            .setDescription('Provide the description content')
             .setRequired(true)
     );
 
@@ -27,15 +35,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
         const embed = new EmbedBuilder()
             .setColor(googleColor())
-            .setTitle(interaction.options.getString('question'));
+            .setTitle(interaction.options.getString('title'))
+            .setDescription(interaction.options.getString('description'));
 
-        const poll = await interaction.reply({
+        return interaction.reply({
             embeds: [embed],
             fetchReply: true
         });
-
-        await poll.react('✅');
-        await poll.react('❌');
     } catch (e) {
         Logging.error(e);
     }

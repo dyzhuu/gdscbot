@@ -78,10 +78,12 @@ async function getNextEvents() {
         timeMin: tomorrow.toISOString(),
         timeMax: dayAfter.toISOString()
     });
+
+    // removes event if already added (stretches over multiple days)
     const events = results!.data.items!.filter(
         (event) =>
             new Date(event.start?.dateTime as string).getTime() >
-            tomorrow.getTime()
+                tomorrow.getTime() || event.recurrence
     );
     return events;
 }
