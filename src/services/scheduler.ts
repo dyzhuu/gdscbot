@@ -7,8 +7,8 @@ import announceEvent from '../scheduledMessages/announceEvent';
 import Logging from '../library/Logging';
 
 function runScheduler() {
-    //write to google sheets every other hour
-    new CronJob('0 0 */2 * * *', () => sheets.writeName, null, true);
+    //write to google sheets every 12 hours
+    new CronJob('0 0 */12 * * *', () => sheets.writeName, null, true);
 
     // daily refresh to fetch for upcoming events, and schedule them to run.
     new CronJob(
@@ -24,17 +24,17 @@ function runScheduler() {
                     let scheduledTime = new Date(
                         event.start!.dateTime as string
                     );
+                    // calculates the time to send out the message based on the start time of weekly recurring events
+                    const weeksPassed = Math.floor(
+                        (new Date().getTime() - scheduledTime.getTime()) /
+                            (7 * 24 * 60 * 60 * 1000)
+                    );
+                    scheduledTime = new Date(
+                        scheduledTime.getTime() +
+                            (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
+                    );
                     let announce = announceEvent;
                     if (event.summary === '💻 Weekly Sync') {
-                        // calculates the time to send out the message based on the start time of weekly recurring events
-                        const weeksPassed = Math.floor(
-                            (new Date().getTime() - scheduledTime.getTime()) /
-                                (7 * 24 * 60 * 60 * 1000)
-                        );
-                        scheduledTime = new Date(
-                            scheduledTime.getTime() +
-                                (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
-                        );
                         // sends the announcement 1 hour before
                         scheduledTime.setHours(scheduledTime.getHours() - 1);
                         announce = weeklySync;
