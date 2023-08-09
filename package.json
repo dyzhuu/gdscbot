@@ -7,7 +7,6 @@
         "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
         "prebuild": "npm run prettier-format",
         "build": "tsc",
-        "prestart": "npm run build",
         "start": "node build/write-creds.js && node build/deploy-commands.js && node build/index.js",
         "dev": "concurrently \"tsc -w\" \"nodemon build/index.js\"",
         "deploy-commands": "tsc && node build/deploy-commands.js",
