@@ -65,25 +65,25 @@ async function processEventUpdates() {
     }
 }
 
-//fetches events that are set to run the day after
+//fetches events from a one hour window tomorrow
 async function getNextEvents() {
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    let dayAfter = new Date();
-    dayAfter.setDate(dayAfter.getDate() + 2);
+    let timeMin = new Date();
+    timeMin.setDate(timeMin.getDate() + 1);
+    let timeMax = new Date();
+    timeMax.setHours(timeMax.getHours() + 25);
 
     const results = await calendar.events.list({
         auth,
         calendarId,
-        timeMin: tomorrow.toISOString(),
-        timeMax: dayAfter.toISOString()
+        timeMin: timeMin.toISOString(),
+        timeMax: timeMax.toISOString()
     });
 
-    // removes event if already added (stretches over multiple days)
+    // removes event if already added
     const events = results!.data.items!.filter(
         (event) =>
             new Date(event.start?.dateTime as string).getTime() >
-                tomorrow.getTime() || event.recurrence
+                timeMin.getTime() || event.recurrence
     );
     return events;
 }
@@ -106,7 +106,7 @@ async function getEventById(id: string) {
         );
 
         // if no id found, or duplicate id's (meaning a cancelled event entry) for recurring event
-        if (!event[0] || event.length > 1) {
+        if (event.length !== 1) {
             return;
         }
         return event[0];

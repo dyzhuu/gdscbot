@@ -10,15 +10,15 @@ function runScheduler() {
     //write to google sheets every 12 hours
     new CronJob('0 0 */12 * * *', () => sheets.writeName, null, true);
 
-    // daily refresh to fetch for upcoming events, and schedule them to run.
+    // hourly refresh to fetch for upcoming events, and schedule them to run.
     new CronJob(
-        '0 0 0 * * *',
+        '0 0 * * * *',
         async () => {
             try {
                 const events =
                     (await calendar.getNextEvents()) as calendar_v3.Schema$Event[];
 
-                if (!events[0]) return;
+                if (!events.length) return;
 
                 events.forEach((event: calendar_v3.Schema$Event) => {
                     let scheduledTime = new Date(
