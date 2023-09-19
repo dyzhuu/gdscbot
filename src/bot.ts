@@ -6,51 +6,51 @@ import runScheduler from './services/scheduler';
 import sheets from './services/googleSheetsAPI';
 
 const { Guilds, MessageContent, GuildMessages, GuildMembers } =
-    GatewayIntentBits;
+  GatewayIntentBits;
 
 const commands = Object(commandModules);
 
 export const client = new Client({
-    intents: [Guilds, MessageContent, GuildMessages, GuildMembers]
+  intents: [Guilds, MessageContent, GuildMessages, GuildMembers]
 });
 
 client.once(Events.ClientReady, async (c) => {
-    Logging.info(`🤖 Ready! Logged in as ${c.user.tag}`);
-    await sheets.writeName();
-    runScheduler();
+  Logging.info(`🤖 Ready! Logged in as ${c.user.tag}`);
+  await sheets.writeName();
+  runScheduler();
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-    if (interaction.isChatInputCommand()) {
-        const { commandName } = interaction;
+  if (interaction.isChatInputCommand()) {
+    const { commandName } = interaction;
 
-        try {
-            await commands[commandName].execute(interaction, client);
-        } catch (err) {
-            Logging.error(err);
-        }
-    } else if (
-        interaction.type == InteractionType.ApplicationCommandAutocomplete
-    ) {
-        const { commandName } = interaction;
-
-        try {
-            await commands[commandName].autocomplete(interaction, client);
-        } catch (error) {
-            Logging.error(error);
-        }
-    } else if (interaction.isButton()) {
-        const { message } = interaction;
-        const commandName = message.interaction?.commandName;
-
-        if (!commandName) return;
-
-        try {
-            await commands[commandName].executeButton(interaction, client);
-        } catch (error) {
-            Logging.error(error);
-        }
+    try {
+      await commands[commandName].execute(interaction, client);
+    } catch (err) {
+      Logging.error(err);
     }
+  } else if (
+    interaction.type == InteractionType.ApplicationCommandAutocomplete
+  ) {
+    const { commandName } = interaction;
+
+    try {
+      await commands[commandName].autocomplete(interaction, client);
+    } catch (error) {
+      Logging.error(error);
+    }
+  } else if (interaction.isButton()) {
+    const { message } = interaction;
+    const commandName = message.interaction?.commandName;
+
+    if (!commandName) return;
+
+    try {
+      await commands[commandName].executeButton(interaction, client);
+    } catch (error) {
+      Logging.error(error);
+    }
+  }
 });
 
 client.login(config.TOKEN);

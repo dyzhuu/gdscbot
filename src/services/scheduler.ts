@@ -7,85 +7,81 @@ import announceEvent from '../scheduledMessages/announceEvent';
 import Logging from '../library/Logging';
 
 function runScheduler() {
-    //write to google sheets every 12 hours
-    new CronJob('0 0 */12 * * *', () => sheets.writeName, null, true);
+  //write to google sheets every 12 hours
+  new CronJob('0 0 */12 * * *', () => sheets.writeName, null, true);
 
-    // hourly refresh to fetch for upcoming events, and schedule them to run.
-    new CronJob(
-        '0 0 * * * *',
-        async () => {
-            try {
-                const events =
-                    (await calendar.getNextEvents()) as calendar_v3.Schema$Event[];
+  // hourly refresh to fetch for upcoming events, and schedule them to run.
+  new CronJob(
+    '0 0 * * * *',
+    async () => {
+      try {
+        const events =
+          (await calendar.getNextEvents()) as calendar_v3.Schema$Event[];
 
-                if (!events.length) return;
+        if (!events.length) return;
 
-                events.forEach((event: calendar_v3.Schema$Event) => {
-                    let scheduledTime = new Date(
-                        event.start!.dateTime as string
-                    );
-                    // calculates the time to send out the message based on the start time of weekly recurring events
-                    const weeksPassed = Math.floor(
-                        (new Date().getTime() - scheduledTime.getTime()) /
-                            (7 * 24 * 60 * 60 * 1000)
-                    );
-                    scheduledTime = new Date(
-                        scheduledTime.getTime() +
-                            (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
-                    );
-                    let announce = announceEvent;
-                    if (event.summary === '💻 Weekly Sync') {
-                        // sends the announcement 1 hour before
-                        scheduledTime.setHours(scheduledTime.getHours() - 1);
-                        announce = weeklySync;
-                    } else {
-                        // sends the event out 24 hours before it starts
-                        scheduledTime.setDate(scheduledTime.getDate() - 1);
-                    }
-                    new CronJob(
-                        scheduledTime,
-                        async () => {
-                            // refreshes the event to latest version if there are any changes
-                            const refreshedEvent = await calendar.getEventById(
-                                event.id!
-                            );
+        events.forEach((event: calendar_v3.Schema$Event) => {
+          let scheduledTime = new Date(event.start!.dateTime as string);
+          // calculates the time to send out the message based on the start time of weekly recurring events
+          const weeksPassed = Math.floor(
+            (new Date().getTime() - scheduledTime.getTime()) /
+              (7 * 24 * 60 * 60 * 1000)
+          );
+          scheduledTime = new Date(
+            scheduledTime.getTime() +
+              (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
+          );
+          let announce = announceEvent;
+          if (event.summary === '💻 Weekly Sync') {
+            // sends the announcement 1 hour before
+            scheduledTime.setHours(scheduledTime.getHours() - 1);
+            announce = weeklySync;
+          } else {
+            // sends the event out 24 hours before it starts
+            scheduledTime.setDate(scheduledTime.getDate() - 1);
+          }
+          new CronJob(
+            scheduledTime,
+            async () => {
+              // refreshes the event to latest version if there are any changes
+              const refreshedEvent = await calendar.getEventById(event.id!);
 
-                            if (!refreshedEvent) return;
+              if (!refreshedEvent) return;
 
-                            announce(refreshedEvent);
-                        },
-                        null,
-                        true
-                    );
-                });
-            } catch (e) {
-                Logging.error(e);
-            }
-        },
-        null,
-        true
-    );
+              announce(refreshedEvent);
+            },
+            null,
+            true
+          );
+        });
+      } catch (e) {
+        Logging.error(e);
+      }
+    },
+    null,
+    true
+  );
 }
 
 // delays the announcement for newly created events if between the hours of 9PM - 8AM
 export function delayCreationAnnouncement(event: calendar_v3.Schema$Event) {
-    let scheduledTime = new Date(event.created as string);
-    const hourCreated = scheduledTime.getHours();
-    scheduledTime.setHours(8, 0, 0, 0);
+  let scheduledTime = new Date(event.created as string);
+  const hourCreated = scheduledTime.getHours();
+  scheduledTime.setHours(8, 0, 0, 0);
 
-    if (hourCreated >= 8 && hourCreated <= 20) {
-        announceEvent(event, 'New Event Created:');
-        return;
-    }
-    if (hourCreated > 20) {
-        scheduledTime.setDate(scheduledTime.getDate() + 1);
-    }
-    new CronJob(
-        scheduledTime,
-        () => announceEvent(event, 'New Event Created:'),
-        null,
-        true
-    );
+  if (hourCreated >= 8 && hourCreated <= 20) {
+    announceEvent(event, 'New Event Created:');
+    return;
+  }
+  if (hourCreated > 20) {
+    scheduledTime.setDate(scheduledTime.getDate() + 1);
+  }
+  new CronJob(
+    scheduledTime,
+    () => announceEvent(event, 'New Event Created:'),
+    null,
+    true
+  );
 }
 
 export default runScheduler;

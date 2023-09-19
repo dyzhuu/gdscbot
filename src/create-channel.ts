@@ -8,20 +8,20 @@ dotenv.config();
 const UUID = process.env.UUID || randomUUID();
 
 async function createNotificationChannel() {
-    try {
-        await calendar.sendWatchRequest(UUID);
-        let expiryTime = new Date();
-        expiryTime.setDate(expiryTime.getDate() + 7);
+  try {
+    await calendar.sendWatchRequest(UUID);
+    let expiryTime = new Date();
+    expiryTime.setDate(expiryTime.getDate() + 7);
 
-        new CronJob(
-            expiryTime,
-            async () => await createNotificationChannel(),
-            null,
-            true
-        );
-    } catch (e) {
-        Logging.error(e);
-    }
+    new CronJob(
+      expiryTime,
+      async () => await createNotificationChannel(),
+      null,
+      true
+    );
+  } catch (e) {
+    Logging.error(e);
+  }
 }
 
 createNotificationChannel();
