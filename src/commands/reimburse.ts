@@ -68,6 +68,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
         const name = interaction.options.getString('name')!;
         const amount = interaction.options.getNumber('amount')!;
+        const comments = interaction.options.getString('comments')!;
 
         const exec: Exec = (await sheets.getExec(1, name))![0];
 
@@ -101,10 +102,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
                 `\`$${amount}\` to be paid into \`${exec.accountNumber}\``
             )
             .setImage(interaction.options.getAttachment('receipt')!.url);
-        embed.addFields({
-            name: 'Comments',
-            value: interaction.options.getString('comments')!
-        });
+
+        if (comments) {
+            embed.addFields({
+                name: 'Comments',
+                value: interaction.options.getString('comments')!
+            });
+        }
         await interaction.reply({
             embeds: [embed],
             components: [row]
