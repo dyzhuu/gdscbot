@@ -39,6 +39,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
         } catch (error) {
             Logging.error(error);
         }
+    } else if (interaction.isButton()) {
+        const { message } = interaction;
+        const commandName = message.interaction?.commandName;
+
+        if (!commandName) return;
+
+        try {
+            await commands[commandName].executeButton(interaction, client);
+        } catch (error) {
+            Logging.error(error);
+        }
     }
 });
 
