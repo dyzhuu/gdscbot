@@ -1,6 +1,4 @@
 import {
-  APIActionRowComponent,
-  APIMessageActionRowComponent,
   ActionRowBuilder,
   AutocompleteInteraction,
   ButtonBuilder,
@@ -17,6 +15,7 @@ import Logging from '../library/Logging';
 import fs from 'fs';
 import sheets from '../services/googleSheetsAPI';
 import Exec from '../models/Exec';
+import config from '../config';
 
 export const data = new SlashCommandBuilder()
   .setName('reimburse')
@@ -122,15 +121,13 @@ export async function executeButton(interaction: ButtonInteraction) {
     interaction.user.id
   );
   const memberName = targetMember?.nickname ?? interaction.user.username;
-  //TODO: update with actual ids
-  // 754995339391533079 892585385614512148
 
-  const is_secretary = targetMember?.roles.cache.has('1153718950480330883');
-  const is_president = targetMember?.roles.cache.has('1153826129501753384');
+  const is_treasurer = targetMember?.roles.cache.has(config.TREASURER_ID);
+  const is_president = targetMember?.roles.cache.has(config.PRESIDENT_ID);
   const originalEmbed = interaction.message.embeds[0];
 
   if (customId === 'confirmPaid') {
-    if (!is_secretary) {
+    if (!is_treasurer) {
       return interaction.reply({
         content: 'You do not have permission to do this',
         ephemeral: true

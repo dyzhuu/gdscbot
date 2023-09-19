@@ -2,7 +2,9 @@ import { google } from 'googleapis';
 import Exec from '../models/Exec';
 import Logging from '../library/Logging';
 import fs from 'fs';
-const spreadsheetId = process.env.SPREADSHEET_ID;
+import config from '../config';
+const spreadsheetId = config.SPREADSHEET_ID;
+
 const auth = new google.auth.JWT({
   keyFile: 'credentials.json',
   scopes: 'https://www.googleapis.com/auth/spreadsheets'

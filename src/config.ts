@@ -9,6 +9,8 @@ const {
   SYNC_CHANNEL_ID,
   ANNOUNCEMENT_CHANNEL_ID,
   PING_ROLE_IDS,
+  PRESIDENT_ID,
+  TREASURER_ID,
   CREDENTIALS_JSON
 } = process.env;
 if (!CLIENT_ID) {
@@ -29,6 +31,10 @@ if (!CLIENT_ID) {
   throw new Error('Missing Event Announcement Channel ID ');
 } else if (!PING_ROLE_IDS) {
   throw new Error('Missing Role IDs environment variable');
+} else if (!PRESIDENT_ID) {
+  throw new Error('Missing Role IDs environment variable');
+} else if (!TREASURER_ID) {
+  throw new Error('Missing Role IDs environment variable');
 }
 const config: Record<string, string> = {
   CLIENT_ID,
@@ -39,6 +45,8 @@ const config: Record<string, string> = {
   SYNC_CHANNEL_ID,
   ANNOUNCEMENT_CHANNEL_ID,
   PING_ROLE_IDS,
+  PRESIDENT_ID,
+  TREASURER_ID,
   CREDENTIALS_JSON
 };
 
