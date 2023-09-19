@@ -11,3 +11,5 @@ names.txt
 syncToken.txt
 
 .vscode
+
+**/*.DS_Store

@@ -39,6 +39,13 @@ export const data = new SlashCommandBuilder()
     )
     .addStringOption((option) =>
         option
+            .setName('account_number')
+            .setDescription(
+                'Enter your bank account number for reimbursement purposes'
+            )
+    )
+    .addStringOption((option) =>
+        option
             .setName('dietary_requirements')
             .setDescription(
                 'Enter your dietary requirements if any, (leave blank if none)'
@@ -49,8 +56,8 @@ export const data = new SlashCommandBuilder()
     )
     .addStringOption((option) =>
         option
-            .setName('year_graduating')
-            .setDescription('Enter your graduating year')
+            .setName('year_of_study')
+            .setDescription('Enter your current year of study')
     )
     .addStringOption((option) =>
         option
@@ -82,11 +89,12 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             interaction.options.getString('role') ?? exec.role,
             interaction.options.getString('email') ?? exec.email,
             interaction.options.getString('phone_number') ?? exec.phoneNumber,
+            interaction.options.getString('account_number') ??
+                exec.accountNumber,
             interaction.options.getString('dietary_requirements') ??
                 exec.dietaryRequirements,
             interaction.options.getString('shirt_size') ?? exec.shirtSize,
-            interaction.options.getString('year_graduating') ??
-                exec.yearGraduating,
+            interaction.options.getString('year_of_study') ?? exec.yearOfStudy,
             interaction.options.getString('degree') ?? exec.degree
         ]);
 
@@ -100,11 +108,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
                         x[0] as keyof typeof execPropertyFormatter
                     ]
                 }: `,
-                value: `${
-                    exec[x[0] as keyof typeof exec] == '-'
-                        ? 'none'
-                        : exec[x[0] as keyof typeof exec]
-                } → ${x[1]}`
+                value: x[1]
             }));
 
         const embed = new EmbedBuilder()

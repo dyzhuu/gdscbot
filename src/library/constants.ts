@@ -10,9 +10,10 @@ export const execPropertyFormatter = {
     role: 'Role',
     email: 'Email',
     phoneNumber: 'Phone Number',
+    accountNumber: 'Account Number',
     dietaryRequirements: 'Dietary Requirements',
     shirtSize: 'Shirt Size',
-    yearGraduating: 'Year Graduating',
+    yearOfStudy: 'Current Year of Study',
     degree: 'Degree'
 };
 

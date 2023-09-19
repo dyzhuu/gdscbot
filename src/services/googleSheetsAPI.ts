@@ -17,7 +17,7 @@ async function createExec(exec: Exec) {
     await service.spreadsheets.values.append({
         spreadsheetId,
         auth,
-        range: 'A2:H',
+        range: 'A2:I',
         valueInputOption: 'USER_ENTERED',
         requestBody: {
             values: [Object.values(exec)]
@@ -63,7 +63,7 @@ async function updateExec(exec: Exec) {
 
     await service.spreadsheets.values.update({
         spreadsheetId,
-        range: `A${row}:H${row}`,
+        range: `A${row}:I${row}`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
             values: [Object.values(exec)]
@@ -95,10 +95,11 @@ function dboToObject(dbo: string[]): Exec {
         role: dbo[1],
         email: dbo[2],
         phoneNumber: dbo[3],
-        dietaryRequirements: dbo[4],
-        shirtSize: dbo[5],
-        yearGraduating: dbo[6],
-        degree: dbo[7]
+        accountNumber: dbo[4],
+        dietaryRequirements: dbo[5],
+        shirtSize: dbo[6],
+        yearOfStudy: dbo[7],
+        degree: dbo[8]
     };
 }
 

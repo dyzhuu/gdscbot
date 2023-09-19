@@ -9,6 +9,7 @@ import fs from 'fs';
 import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
 import googleColor from '../../library/colours';
+import Exec from '../../models/Exec';
 
 export const data = new SlashCommandBuilder()
     .setName('getexec')
@@ -19,6 +20,11 @@ export const data = new SlashCommandBuilder()
             .setDescription('Enter the name of the exec whose details to get')
             .setRequired(true)
             .setAutocomplete(true)
+    )
+    .addBooleanOption((option) =>
+        option
+            .setName('extended')
+            .setDescription('Get extended information about the exec')
     );
 
 export async function autocomplete(interaction: AutocompleteInteraction) {
@@ -36,18 +42,45 @@ export async function autocomplete(interaction: AutocompleteInteraction) {
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     try {
-        const name = interaction.options
-            .getString('name')!
-            .split(' ')
-            .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
-            .join(' ');
-        const exec = (await sheets.getExec(1, name))![0];
+        const name = interaction.options.getString('name')!;
+        // .split(' ')
+        // .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
+        // .join(' ');
+        const exec: Exec = (await sheets.getExec(1, name))![0];
+
+        console.log(exec);
 
         const fields: APIEmbedField[] = [
             { name: 'Role: ', value: exec.role },
             { name: 'Email: ', value: exec.email },
-            { name: 'Phone Number: ', value: exec.phoneNumber }
+            { name: 'Phone Number: ', value: exec.phoneNumber },
+            {
+                name: 'Account Number',
+                value: exec.accountNumber ? exec.accountNumber : '-'
+            }
         ];
+
+        if (interaction.options.getBoolean('extended')) {
+            const remainingFields = [
+                {
+                    name: 'Dietary Requirements',
+                    value: exec.dietaryRequirements
+                        ? exec.dietaryRequirements
+                        : '-'
+                },
+                {
+                    name: 'Shirt Size',
+                    value: exec.shirtSize ? exec.shirtSize : '-'
+                },
+                {
+                    name: 'Current Year of Study',
+                    value: exec.yearOfStudy ? exec.yearOfStudy : '-'
+                },
+                { name: 'Degree', value: exec.degree ? exec.degree : '-' }
+            ];
+
+            fields.push(...remainingFields);
+        }
 
         const embed = new EmbedBuilder()
             .setColor(googleColor())

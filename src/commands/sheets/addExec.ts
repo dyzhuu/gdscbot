@@ -8,6 +8,7 @@ import sheets from '../../services/googleSheetsAPI';
 import Logging from '../../library/Logging';
 import googleColor from '../../library/colours';
 import { roleChoices } from '../../library/constants';
+import Exec from '../../models/Exec';
 
 export const data = new SlashCommandBuilder()
     .setName('addexec')
@@ -39,6 +40,13 @@ export const data = new SlashCommandBuilder()
     )
     .addStringOption((option) =>
         option
+            .setName('account_number')
+            .setDescription(
+                'Enter your bank account number for reimbursement purposes'
+            )
+    )
+    .addStringOption((option) =>
+        option
             .setName('dietary_requirements')
             .setDescription(
                 'Enter your dietary requirements if any, (leave blank if none)'
@@ -49,8 +57,8 @@ export const data = new SlashCommandBuilder()
     )
     .addStringOption((option) =>
         option
-            .setName('year_graduating')
-            .setDescription('Enter your graduating year')
+            .setName('year_of_study')
+            .setDescription('Enter your current year of study')
     )
     .addStringOption((option) =>
         option
@@ -61,18 +69,18 @@ export const data = new SlashCommandBuilder()
     );
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-    const values: string[] = interaction.options.data.map(
-        (x) => x.value as string
-    );
-    values.splice(4);
-
-    let exec = sheets.dboToObject([
-        ...values,
-        interaction.options.getString('dietary_requirements') ?? '-',
-        interaction.options.getString('shirt_size') ?? '-',
-        interaction.options.getString('year_graduating') ?? '-',
-        interaction.options.getString('degree') ?? '-'
-    ]);
+    let exec: Exec = {
+        name: interaction.options.getString('name')!,
+        role: interaction.options.getString('role')!,
+        email: interaction.options.getString('email')!,
+        phoneNumber: interaction.options.getString('phone_number')!,
+        accountNumber: interaction.options.getString('account_number') ?? '-',
+        dietaryRequirements:
+            interaction.options.getString('dietary_requirements') ?? '-',
+        shirtSize: interaction.options.getString('shirt_size') ?? '-',
+        yearOfStudy: interaction.options.getString('year_of_study') ?? '-',
+        degree: interaction.options.getString('degree') ?? '-'
+    };
 
     exec.name = exec.name
         .toLowerCase()
@@ -83,7 +91,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     const remainingFields = [
         { name: 'Dietary Requirements', value: exec.dietaryRequirements },
         { name: 'Shirt Size', value: exec.shirtSize },
-        { name: 'Year Graduating', value: exec.yearGraduating },
+        { name: 'Current Year of Study', value: exec.yearOfStudy },
         { name: 'Degree', value: exec.degree }
     ].filter((field) => field.value !== '-');
 
@@ -91,6 +99,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         { name: 'Role: ', value: exec.role },
         { name: 'Email: ', value: exec.email },
         { name: 'Phone Number: ', value: exec.phoneNumber },
+        { name: 'Account Number', value: exec.accountNumber },
         ...remainingFields
     ];
 

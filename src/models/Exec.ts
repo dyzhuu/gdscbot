@@ -3,8 +3,9 @@ export default interface Exec {
     role: string;
     email: string;
     phoneNumber: string;
+    accountNumber: string;
     dietaryRequirements: string;
     shirtSize: string;
-    yearGraduating: string;
+    yearOfStudy: string;
     degree: string;
 }
