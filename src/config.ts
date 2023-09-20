@@ -32,9 +32,9 @@ if (!CLIENT_ID) {
 } else if (!PING_ROLE_IDS) {
   throw new Error('Missing Role IDs environment variable');
 } else if (!PRESIDENT_ID) {
-  throw new Error('Missing Role IDs environment variable');
+  throw new Error('Missing President ID environment variable');
 } else if (!TREASURER_ID) {
-  throw new Error('Missing Role IDs environment variable');
+  throw new Error('Missing Treasurer ID environment variable');
 }
 const config: Record<string, string> = {
   CLIENT_ID,

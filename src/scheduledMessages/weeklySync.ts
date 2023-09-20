@@ -13,17 +13,13 @@ import { calendar_v3 } from 'googleapis';
 async function weeklySync(event: calendar_v3.Schema$Event) {
   const channelId = config.SYNC_CHANNEL_ID;
   const rolesIds = config.PING_ROLE_IDS.split(' ');
-  let meetingTime = new Date(event.start?.dateTime as string);
-
+  let meetingTime = new Date(event.start!.dateTime as string);
   const weeksPassed = Math.floor(
     (new Date().getTime() - meetingTime.getTime()) / (7 * 24 * 60 * 60 * 1000)
   );
-
   meetingTime = new Date(
     meetingTime.getTime() + (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
   );
-
-  meetingTime.setSeconds(0, 0);
 
   const client = new Client({ intents: GatewayIntentBits.Guilds });
   client

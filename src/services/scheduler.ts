@@ -8,11 +8,11 @@ import Logging from '../library/Logging';
 
 function runScheduler() {
   //write to google sheets every 12 hours
-  new CronJob('0 0 */12 * * *', () => sheets.writeName, null, true);
+  new CronJob('0 */12 * * *', () => sheets.writeName, null, true);
 
   // hourly refresh to fetch for upcoming events, and schedule them to run.
   new CronJob(
-    '0 0 * * * *',
+    '0 * * * *', // runs every hour
     async () => {
       try {
         const events =
@@ -32,6 +32,7 @@ function runScheduler() {
               (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
           );
           let announce = announceEvent;
+
           if (event.summary === '💻 Weekly Sync') {
             // sends the announcement 1 hour before
             scheduledTime.setHours(scheduledTime.getHours() - 1);
