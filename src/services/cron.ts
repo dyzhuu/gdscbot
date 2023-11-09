@@ -6,7 +6,7 @@ import weeklySync from '../scheduledMessages/weeklySync';
 import announceEvent from '../scheduledMessages/announceEvent';
 import Logging from '../library/Logging';
 
-const eventsCronJob = async () => {
+export const eventsCronJob = async () => {
   try {
     const events = await calendar.getNextEvents();
 
@@ -20,7 +20,7 @@ const eventsCronJob = async () => {
   }
 };
 
-const syncCronJob = async () => {
+export const syncCronJob = async () => {
   try {
     const event = await calendar.getWeeklySync();
 
@@ -42,7 +42,7 @@ const syncCronJob = async () => {
   }
 };
 
-function runScheduler() {
+function runCron() {
   //updates local sheets cache every 6 hours
   new CronJob('0 */6 * * *', () => sheets.writeName, null, true);
 
@@ -63,4 +63,4 @@ function runScheduler() {
   );
 }
 
-export default runScheduler;
+export default runCron;

@@ -2,8 +2,8 @@ import { Client, GatewayIntentBits, Events, InteractionType } from 'discord.js';
 import config from './config';
 import * as commandModules from './commands';
 import Logging from './library/Logging';
-import runScheduler from './services/scheduler';
 import sheets from './services/googleSheetsAPI';
+import runCron from './services/cron';
 
 const { Guilds, MessageContent, GuildMessages, GuildMembers } =
   GatewayIntentBits;
@@ -17,7 +17,7 @@ export const client = new Client({
 client.once(Events.ClientReady, async (c) => {
   Logging.info(`🤖 Ready! Logged in as ${c.user.tag}`);
   await sheets.writeName();
-  runScheduler();
+  runCron();
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
