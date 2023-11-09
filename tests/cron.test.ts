@@ -25,10 +25,10 @@ describe('eventsCronJob', () => {
         summary: 'Test event 1',
         description: 'Test event 1 description',
         start: {
-          dateTime: '2021-09-10T10:00:00.000+08:00'
+          dateTime: new Date().toISOString()
         },
         end: {
-          dateTime: '2021-09-10T11:00:00.000+08:00'
+          dateTime: new Date().toISOString()
         },
         location: 'Test event 1 location'
       },
@@ -36,10 +36,10 @@ describe('eventsCronJob', () => {
         summary: 'Test event 2',
         description: 'Test event 2 description',
         start: {
-          dateTime: '2021-09-11T10:00:00.000+08:00'
+          dateTime: new Date().toISOString()
         },
         end: {
-          dateTime: '2021-09-11T11:00:00.000+08:00'
+          dateTime: new Date().toISOString()
         },
         location: 'Test event 2 location'
       }
