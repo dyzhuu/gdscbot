@@ -7,54 +7,59 @@ import announceEvent from '../scheduledMessages/announceEvent';
 import Logging from '../library/Logging';
 
 function runScheduler() {
-  //write to google sheets every 12 hours
-  new CronJob('0 */12 * * *', () => sheets.writeName, null, true);
+  //updates local sheets cache every 6 hours
+  new CronJob('0 */6 * * *', () => sheets.writeName, null, true);
 
-  // hourly refresh to fetch for upcoming events, and schedule them to run.
+  // quarter hourly refresh to fetch for upcoming events, and schedule them to run.
   new CronJob(
-    '0 * * * *', // runs every hour i.e. every minute == 0
+    '*/15 * * * *', // runs every 15 minutes
     async () => {
       try {
-        const events =
-          (await calendar.getNextEvents()) as calendar_v3.Schema$Event[];
+        const events = await calendar.getNextEvents();
 
         if (!events.length) return;
 
         events.forEach((event: calendar_v3.Schema$Event) => {
           let scheduledTime = new Date(event.start!.dateTime as string);
           // calculates the time to send out the message based on the start time of weekly recurring events
-          const weeksPassed = Math.floor(
-            (new Date().getTime() - scheduledTime.getTime()) /
-              (7 * 24 * 60 * 60 * 1000)
-          );
-          scheduledTime = new Date(
-            scheduledTime.getTime() +
-              (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
-          );
-          let announce = announceEvent;
+          announceEvent(event);
 
           if (event.summary === '💻 Weekly Sync') {
             // sends the announcement 1 hour before
             scheduledTime.setHours(scheduledTime.getHours() - 1);
-            announce = weeklySync;
           } else {
             // sends the event out 24 hours before it starts
             scheduledTime.setDate(scheduledTime.getDate() - 1);
           }
-          new CronJob(
-            scheduledTime,
-            async () => {
-              // refreshes the event to latest version if there are any changes
-              const refreshedEvent = await calendar.getEventById(event.id!);
-
-              if (!refreshedEvent) return;
-
-              announce(refreshedEvent);
-            },
-            null,
-            true
-          );
         });
+      } catch (e) {
+        Logging.error(e);
+      }
+    },
+    null,
+    true
+  );
+
+  // quarter hourly refresh to fetch for weekly syncs.
+  new CronJob(
+    '*/15 * * * *', // runs every 15 minutes
+    async () => {
+      try {
+        const event = await calendar.getWeeklySync();
+
+        if (!event) return;
+
+        let scheduledTime = new Date(event.start!.dateTime as string);
+
+        const weeksPassed = Math.floor(
+          (new Date().getTime() - scheduledTime.getTime()) /
+            (7 * 24 * 60 * 60 * 1000)
+        );
+        scheduledTime = new Date(
+          scheduledTime.getTime() + (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
+        );
+
+        weeklySync(event, scheduledTime);
       } catch (e) {
         Logging.error(e);
       }

@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import Logging from '../library/Logging';
 import config from '../config';
+import { calendar_v3 } from 'googleapis';
 
 const calendarId: string = config.CALENDAR_ID;
 const auth = new google.auth.JWT({
@@ -9,12 +10,15 @@ const auth = new google.auth.JWT({
 });
 const calendar = google.calendar({ version: 'v3', auth });
 
-//fetches events from a one hour window tomorrow
-async function getNextEvents() {
+//fetches events from a 15 minute window tomorrow
+async function getNextEvents(): Promise<calendar_v3.Schema$Event[]> {
   let timeMin = new Date();
   timeMin.setDate(timeMin.getDate() + 1);
+  timeMin.setSeconds(0);
   let timeMax = new Date();
-  timeMax.setHours(timeMax.getHours() + 25);
+  timeMax.setDate(timeMax.getDate() + 1);
+  timeMax.setMinutes(timeMax.getMinutes() + 14);
+  timeMin.setSeconds(59);
 
   const results = await calendar.events.list({
     auth,
@@ -23,20 +27,23 @@ async function getNextEvents() {
     timeMax: timeMax.toISOString()
   });
 
-  // removes event if already added
+  // filters events by events that are not in the past (ignores recurring events)
   const events = results!.data.items!.filter(
     (event) =>
-      new Date(event.start?.dateTime as string).getTime() > timeMin.getTime() ||
-      event.recurrence
+      event.summary !== '💻 Weekly Sync' &&
+      new Date(event.start?.dateTime as string).getTime() > timeMin.getTime()
   );
   return events;
 }
 
-//fetches events from a one hour window tomorrow
-async function getWeeklySyncEvents() {
+//fetches events 15 minutes within the next hour
+async function getWeeklySync(): Promise<calendar_v3.Schema$Event | undefined> {
   let timeMin = new Date();
+  timeMin.setHours(timeMin.getHours() + 1);
+  timeMin.setSeconds(0);
   let timeMax = new Date();
-  timeMax.setHours(timeMax.getHours() + 1);
+  timeMax.setMinutes(timeMax.getMinutes() + 74);
+  timeMin.setSeconds(59);
 
   const results = await calendar.events.list({
     auth,
@@ -45,43 +52,15 @@ async function getWeeklySyncEvents() {
     timeMax: timeMax.toISOString()
   });
 
-  // removes event if already added
+  // filters events by Weekly Syncs
   const events = results!.data.items!.filter(
-    (event) =>
-      new Date(event.start?.dateTime as string).getTime() > timeMin.getTime() ||
-      event.recurrence
+    (event) => event.summary === '💻 Weekly Sync' && event.recurrence
   );
-  return events;
-}
-
-// gets and returns an event by id (limited to next two days)
-async function getEventById(id: string) {
-  try {
-    let dayAfter = new Date();
-    dayAfter.setDate(dayAfter.getDate() + 2);
-
-    const results = await calendar.events.list({
-      auth,
-      calendarId,
-      timeMin: new Date().toISOString(),
-      timeMax: dayAfter.toISOString()
-    });
-
-    const event = results!.data.items!.filter((event) =>
-      event.id!.includes(id)
-    );
-
-    // if no id found, or duplicate id's (meaning a cancelled event entry) for recurring event
-    if (event.length !== 1) {
-      return;
-    }
-    return event[0];
-  } catch (e) {
-    Logging.error(e);
-  }
+  if (!events.length) return;
+  return events[0];
 }
 
 export default {
   getNextEvents,
-  getEventById
+  getWeeklySync
 };

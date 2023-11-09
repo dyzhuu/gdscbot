@@ -14,7 +14,7 @@ import googleColor from '../library/colours';
 // announces event as a discord embed
 async function announceEvent(
   event: calendar_v3.Schema$Event,
-  message: string = ''
+  message?: string
 ) {
   const channelId = config.ANNOUNCEMENT_CHANNEL_ID;
   const rolesIds = config.PING_ROLE_IDS.split(' ');
