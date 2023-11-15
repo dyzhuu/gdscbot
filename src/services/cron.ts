@@ -26,17 +26,16 @@ export const syncCronJob = async () => {
 
     if (!event) return;
 
-    let scheduledTime = new Date(event.start!.dateTime as string);
+    let meetingTime = new Date(event.start!.dateTime as string);
 
     const weeksPassed = Math.floor(
-      (new Date().getTime() - scheduledTime.getTime()) /
-        (7 * 24 * 60 * 60 * 1000)
+      (new Date().getTime() - meetingTime.getTime()) / (7 * 24 * 60 * 60 * 1000)
     );
-    scheduledTime = new Date(
-      scheduledTime.getTime() + (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
+    meetingTime = new Date(
+      meetingTime.getTime() + (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
     );
 
-    weeklySync(event, scheduledTime);
+    weeklySync(event, meetingTime);
   } catch (e) {
     Logging.error(e);
   }
