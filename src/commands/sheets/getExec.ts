@@ -46,11 +46,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     // .join(' ');
     const exec: Exec = (await sheets.getExec(1, name))![0];
 
-    console.log(exec);
-
     const fields: APIEmbedField[] = [
       { name: 'Role: ', value: exec.role },
-      { name: 'Email: ', value: exec.email },
+      { name: 'Email: ', value: exec.preferredEmail },
       { name: 'Phone Number: ', value: exec.phoneNumber },
       {
         name: 'Account Number',

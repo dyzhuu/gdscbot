@@ -81,7 +81,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     const updatedExec: Exec = sheets.dboToObject([
       name,
       interaction.options.getString('role') ?? exec.role,
-      interaction.options.getString('email') ?? exec.email,
+      interaction.options.getString('preferred_email') ?? exec.preferredEmail,
+      interaction.options.getString('university_email') ?? exec.universityEmail,
       interaction.options.getString('phone_number') ?? exec.phoneNumber,
       interaction.options.getString('account_number') ?? exec.accountNumber,
       interaction.options.getString('dietary_requirements') ??

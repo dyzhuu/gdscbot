@@ -35,7 +35,7 @@ export const syncCronJob = async () => {
       meetingTime.getTime() + (weeksPassed + 1) * 7 * 24 * 60 * 60 * 1000
     );
 
-    weeklySync(event, meetingTime);
+    weeklySync(meetingTime);
   } catch (e) {
     Logging.error(e);
   }
@@ -46,12 +46,12 @@ function runCron() {
   new CronJob('0 */6 * * *', () => sheets.writeName, null, true);
 
   // quarter hourly refresh to fetch for upcoming events, and schedule them to run.
-  new CronJob(
-    '*/15 * * * *', // runs every 15 minutes
-    eventsCronJob,
-    null,
-    true
-  );
+  // new CronJob(
+  //   '*/15 * * * *', // runs every 15 minutes
+  //   eventsCronJob,
+  //   null,
+  //   true
+  // );
 
   // quarter hourly refresh to fetch for weekly syncs.
   new CronJob(

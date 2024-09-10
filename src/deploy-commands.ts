@@ -1,18 +1,21 @@
-import { REST, Routes, SlashCommandBuilder } from 'discord.js';
+import {
+  REST,
+  Routes,
+  SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder
+} from 'discord.js';
 import config from './config';
 import * as commandModules from './commands';
 import Logging from './library/Logging';
 
-type Command = {
-  data: Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
-};
+const commands: Array<SlashCommandBuilder | SlashCommandOptionsOnlyBuilder> =
+  [];
 
-const commands: Omit<
-  SlashCommandBuilder,
-  'addSubcommand' | 'addSubcommandGroup'
->[] = [];
+const commandModulesObject = Object.values(commandModules) as Array<{
+  data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
+}>;
 
-for (const module of Object.values<Command>(commandModules)) {
+for (const module of commandModulesObject) {
   commands.push(module.data);
 }
 

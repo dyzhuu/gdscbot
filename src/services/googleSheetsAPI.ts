@@ -19,7 +19,7 @@ async function createExec(exec: Exec) {
   await service.spreadsheets.values.append({
     spreadsheetId,
     auth,
-    range: 'A2:I',
+    range: 'A2:J',
     valueInputOption: 'USER_ENTERED',
     requestBody: {
       values: [Object.values(exec)]
@@ -38,12 +38,14 @@ async function createExec(exec: Exec) {
 async function getExec(column: number, value: string): Promise<Exec[] | void> {
   const result = await service.spreadsheets.values.get({
     spreadsheetId,
-    range: 'A2:I',
+    range: 'A2:J',
     auth
   });
 
+  console.log(result.data.values);
+
   const sheetValues: string[][] = result.data.values!.filter(
-    (row) => row[column - 1] === value
+    (row: any) => row[column - 1] === value
   );
   const exec = sheetValues.map((details) => dboToObject(details));
 
@@ -65,7 +67,7 @@ async function updateExec(exec: Exec) {
 
   await service.spreadsheets.values.update({
     spreadsheetId,
-    range: `A${row}:I${row}`,
+    range: `A${row}:J${row}`,
     valueInputOption: 'USER_ENTERED',
     requestBody: {
       values: [Object.values(exec)]
@@ -92,16 +94,29 @@ async function writeName() {
 
 // array to Exec object
 function dboToObject(dbo: string[]): Exec {
+  const [
+    name,
+    role,
+    preferredEmail,
+    universityEmail,
+    phoneNumber,
+    accountNumber,
+    dietaryRequirements,
+    shirtSize,
+    yearOfStudy,
+    degree
+  ] = dbo;
   return {
-    name: dbo[0],
-    role: dbo[1],
-    email: dbo[2],
-    phoneNumber: dbo[3],
-    accountNumber: dbo[4],
-    dietaryRequirements: dbo[5],
-    shirtSize: dbo[6],
-    yearOfStudy: dbo[7],
-    degree: dbo[8]
+    name,
+    role,
+    preferredEmail,
+    universityEmail,
+    phoneNumber,
+    accountNumber,
+    dietaryRequirements,
+    shirtSize,
+    yearOfStudy,
+    degree
   };
 }
 

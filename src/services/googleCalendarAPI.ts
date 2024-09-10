@@ -1,8 +1,6 @@
 import { google } from 'googleapis';
-import Logging from '../library/Logging';
 import config from '../config';
 import { calendar_v3 } from 'googleapis';
-import { time } from 'console';
 
 const calendarId: string = config.CALENDAR_ID;
 const auth = new google.auth.JWT({
@@ -28,17 +26,12 @@ async function getNextEvents(): Promise<calendar_v3.Schema$Event[]> {
     timeMin: timeMin.toISOString(),
     timeMax: timeMax.toISOString()
   });
-  console.log(
-    new Date(results.data.items![0].start?.dateTime as string).getTime()
-  );
-  console.log(timeMin.getTime());
   // filters events by events that are not in the past (ignores recurring events)
   const events = results!.data.items!.filter(
-    (event) =>
+    (event: calendar_v3.Schema$Event) =>
       event.summary !== '💻 Weekly Sync' &&
       new Date(event.start?.dateTime as string).getTime() >= timeMin.getTime()
   );
-  console.log(events);
   return events;
 }
 
@@ -58,12 +51,41 @@ async function getWeeklySync(): Promise<calendar_v3.Schema$Event | undefined> {
     timeMax: timeMax.toISOString()
   });
 
+  const minMinutes = timeMin.getHours() * 60 + timeMin.getMinutes();
+
   // filters events by Weekly Syncs
   const events = results!.data.items!.filter(
-    (event) => event.summary === '💻 Weekly Sync' && event.recurrence
+    (event: calendar_v3.Schema$Event) => {
+      let eventTime = new Date(event.start?.dateTime as string);
+
+      if (event.originalStartTime?.dateTime)
+        eventTime = new Date(event.originalStartTime.dateTime);
+
+      return (
+        event.summary === '💻 Weekly Sync' &&
+        event.status === 'confirmed' &&
+        eventTime.getHours() * 60 + eventTime.getMinutes() >= minMinutes
+      ); // event time must be after current time.
+    }
   );
-  if (!events.length) return;
-  return events[0];
+
+  const idsToIgnore = results!.data.items!.reduce(
+    (acc: Array<string>, event: calendar_v3.Schema$Event) => {
+      if (!!event.originalStartTime && event.recurringEventId) {
+        acc.push(event.recurringEventId);
+      }
+      return acc;
+    },
+    new Array()
+  );
+
+  const filteredEvents = events.filter(
+    (e: calendar_v3.Schema$Event) =>
+      !(e.recurrence && !!e.id && idsToIgnore.includes(e.id))
+  );
+
+  if (!filteredEvents.length) return;
+  return filteredEvents[0];
 }
 
 export default {

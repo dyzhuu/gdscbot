@@ -28,8 +28,14 @@ export const data = new SlashCommandBuilder()
   )
   .addStringOption((option) =>
     option
-      .setName('email')
+      .setName('preferred_email')
       .setDescription('Enter your preferred email address')
+      .setRequired(true)
+  )
+  .addStringOption((option) =>
+    option
+      .setName('university_email')
+      .setDescription('Enter your university email address')
       .setRequired(true)
   )
   .addStringOption((option) =>
@@ -72,7 +78,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   let exec: Exec = {
     name: interaction.options.getString('name')!,
     role: interaction.options.getString('role')!,
-    email: interaction.options.getString('email')!,
+    preferredEmail: interaction.options.getString('preferred_email')!,
+    universityEmail: interaction.options.getString('university_email')!,
     phoneNumber: interaction.options.getString('phone_number')!,
     accountNumber: interaction.options.getString('account_number') ?? '-',
     dietaryRequirements:
@@ -97,7 +104,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
   const fields: APIEmbedField[] = [
     { name: 'Role: ', value: exec.role },
-    { name: 'Email: ', value: exec.email },
+    { name: 'Email: ', value: exec.preferredEmail },
     { name: 'Phone Number: ', value: exec.phoneNumber },
     { name: 'Account Number', value: exec.accountNumber },
     ...remainingFields

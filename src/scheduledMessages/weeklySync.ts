@@ -10,7 +10,7 @@ import config from '../config';
 import googleColor from '../library/colours';
 import { calendar_v3 } from 'googleapis';
 
-async function weeklySync(event: calendar_v3.Schema$Event, meetingTime: Date) {
+async function weeklySync(meetingTime: Date) {
   const channelId = config.SYNC_CHANNEL_ID;
   const rolesIds = config.PING_ROLE_IDS.split(' ');
 

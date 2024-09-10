@@ -1,0 +1,23 @@
+# fly.toml app configuration file generated for rbot on 2024-05-27T23:08:14+12:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'gdsc-bot'
+primary_region = 'syd'
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+
+  # Allow machines to run continuously
+  auto_start_machines = false
+  auto_stop_machines = false
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = 256
+  cpus = 1
+  cpu_kind = "shared"

@@ -7,7 +7,7 @@
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "prebuild": "npm run prettier-format",
     "build": "tsc",
-    "start": "node build/write-creds.js && node build/deploy-commands.js && node build/bot.js",
+    "start": "node build/write-creds.js && node build/bot.js",
     "dev": "concurrently \"tsc -w\" \"nodemon build/bot.js\"",
     "deploy-commands": "tsc && node build/deploy-commands.js",
     "test": "jest"
@@ -28,7 +28,7 @@
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.1.3"
   },
   "dependencies": {
