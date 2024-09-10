@@ -56,10 +56,7 @@ async function getWeeklySync(): Promise<calendar_v3.Schema$Event | undefined> {
   // filters events by Weekly Syncs
   const events = results!.data.items!.filter(
     (event: calendar_v3.Schema$Event) => {
-      let eventTime = new Date(event.start?.dateTime as string);
-
-      if (event.originalStartTime?.dateTime)
-        eventTime = new Date(event.originalStartTime.dateTime);
+      const eventTime = new Date(event.start?.dateTime as string);
 
       return (
         event.summary === '💻 Weekly Sync' &&
