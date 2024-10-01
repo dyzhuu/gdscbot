@@ -23,7 +23,7 @@ export const data = new SlashCommandBuilder()
   .addStringOption((option) =>
     option
       .setName('name')
-      .setDescription('Enter the person to reimburse here')
+      .setDescription('Enter the name of the person to reimburse here')
       .setRequired(true)
       .setAutocomplete(true)
   )

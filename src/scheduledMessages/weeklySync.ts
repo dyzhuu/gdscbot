@@ -7,10 +7,8 @@ import {
 
 import Logging from '../library/Logging';
 import config from '../config';
-import googleColor from '../library/colours';
-import { calendar_v3 } from 'googleapis';
 
-async function weeklySync(meetingTime: Date) {
+async function weeklySync() {
   const channelId = config.SYNC_CHANNEL_ID;
   const rolesIds = config.PING_ROLE_IDS.split(' ');
 
@@ -23,14 +21,11 @@ async function weeklySync(meetingTime: Date) {
         Logging.error(`Channel ${channelId} does not exist`);
       }
 
-      const embed = new EmbedBuilder()
-        .setColor(googleColor())
-        .setDescription(`Weekly sync <t:${meetingTime.valueOf() / 1000}:R>!`);
-
       channel
         .send({
-          content: `${rolesIds.map((roleId) => `<@&${roleId}>`).join(' ')}`,
-          embeds: [embed]
+          content: `${rolesIds
+            .map((roleId) => `<@&${roleId}>`)
+            .join(' ')} Weekly sync now!`
         })
         .then(() => client.destroy());
     })
