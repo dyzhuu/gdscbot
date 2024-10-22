@@ -38,10 +38,8 @@ async function getNextEvents(): Promise<calendar_v3.Schema$Event[]> {
 //fetches events 15 minutes within the next hour
 async function getWeeklySync(): Promise<calendar_v3.Schema$Event | undefined> {
   let timeMin = new Date();
-  // timeMin.setHours(timeMin.getHours() + 1);
   timeMin.setSeconds(0);
   let timeMax = new Date();
-  // timeMax.setMinutes(timeMax.getMinutes() + 75);
   timeMax.setMinutes(timeMax.getMinutes() + 15);
   timeMin.setSeconds(0);
 
@@ -77,12 +75,17 @@ async function getWeeklySync(): Promise<calendar_v3.Schema$Event | undefined> {
     new Array()
   );
 
-  const filteredEvents = events.filter(
-    (e: calendar_v3.Schema$Event) =>
-      !(e.recurrence && !!e.id && idsToIgnore.includes(e.id))
-  );
+  const filteredEvents = events.filter((e: calendar_v3.Schema$Event) => {
+    const eventStartTime = new Date(e.start?.dateTime as string);
+    return (
+      !(e.recurrence && !!e.id && idsToIgnore.includes(e.id)) &&
+      eventStartTime >= timeMin &&
+      eventStartTime <= timeMax
+    );
+  });
 
   if (!filteredEvents.length) return;
+
   return filteredEvents[0];
 }
 
