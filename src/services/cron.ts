@@ -56,7 +56,7 @@ function runCron() {
 
   // quarter hourly refresh to fetch for weekly syncs.
   new CronJob(
-    '*/15 * * * * *', // runs every 15 minutes
+    '*/15 * * * *', // runs every 15 minutes
     syncCronJob,
     null,
     true
